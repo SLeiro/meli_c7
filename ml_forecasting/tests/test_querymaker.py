@@ -1,5 +1,5 @@
 from datetime import datetime
-from shipping_predictor.etl.base import TEMPLATE_SHIPPING, QueryMaker
+from ml_forecasting.etl.base import TEMPLATE_SHIPPING, QueryMaker
 
 
 def test_date_to_querymaker_one_query():

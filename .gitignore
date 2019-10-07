@@ -108,3 +108,5 @@ venv.bak/
 .idea/
 
 .DS_Store
+
+etl/raw_data/*.csv
