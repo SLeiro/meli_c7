@@ -1,0 +1,10 @@
+# The package melitk.fda is already installed (by default)
+--index-url http://pypi.ml.com/simple/ --trusted-host pypi.ml.com
+
+melitk.analytics
+melitk.fda
+pandas==0.24.2
+scikit-learn==0.21.1
+seaborn
+matplotlib
+.

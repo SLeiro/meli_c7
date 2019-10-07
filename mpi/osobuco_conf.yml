@@ -1,0 +1,13 @@
+osobuco:
+  data_path: /tmp
+  log_level: DEBUG
+  silent: false
+
+storage:
+  type: fda
+
+models:
+  - name: model
+    load: mpi.bridge.load
+    endpoints:
+      /predict: mpi.bridge.predict
