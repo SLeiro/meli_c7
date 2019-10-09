@@ -7,86 +7,37 @@ from datetime import timedelta
 
 logger = logging.getLogger(__name__)
 
-TEMPLATE_SHIPPING = """
+TEMPLATE_BUYS = """
 SELECT
-    /* BT_SHP_SHIPMENTS */
-    s.shp_shipment_id,
-    s.shp_sender_id,
-    s.shp_datetime_ready_to_ship_id,
-    s.shp_datetime_shipped_id,
-    s.shp_handling_time,
-    s.shp_datetime_created_id,
-    s.shp_shipping_mode_id,
-    s.shp_type,
-    s.shp_receiver_id,
-    s.shp_speed_offset,
-    s.shp_speed,
-    s.shp_datetime_delivered_id,
-    s.shp_datetime_cancelled_id,
-    s.shp_free_flag_id,
-    s.shp_order_cost,
-    s.shp_real_cost,
-    s.shp_carrier_cost,
-    s.shp_picking_type_id,
-    s.shp_quantity,
-    s.shp_date_created_id,
-    s.shp_date_shipped_id,
-    s.shp_service_id,
-    s.shp_hl_real_day,
-    s.shp_method_id,
-    s.shp_height,
-    s.shp_weight,
-    s.shp_volume,
-    s.shp_length,
-    s.shp_diameter,
-    s.shp_date_ready_to_ship_id,
-    s.shp_date_first_visit_id,
-    s.shp_date_handling_id,
-    s.shp_status_id,
-    s.shp_source_id,
-    dra.shp_type_rule_id,
-    /* LK_SHP_SHIPMENTS_TIMES */
-    sst.shp_time_deviation_days_type,
-    /* BT_SHP_SHIPPING_ITEMS */
-    SI.ITE_ITEM_ID,
-    SI.CAT_CATEG_ID_L7,
-    /* LK_SHP_ADDRESS */
-    add_s.shp_add_city_id AS sender_shp_add_city_id,
-    add_s.shp_add_state_id AS sender_shp_add_state_id,
-    add_s.shp_add_zip_code AS sender_shp_add_zip_code,
-    add_s.shp_add_latitude AS sender_shp_add_latitude,
-    add_s.shp_add_longitude AS sender_shp_add_longitude,
-    add_r.shp_add_city_id AS receiver_shp_add_city_id,
-    add_r.shp_add_state_id AS receiver_shp_add_state_id,
-    add_r.shp_add_zip_code AS receiver_shp_add_zip_code,
-    add_r.shp_add_longitude AS receiver_shp_add_longitude,
-    add_r.shp_add_latitude AS receiver_shp_add_latitude,
-    /* LK_SHP_DELIVERY_RULE_APPLIED */
-    dra.shp_speed AS dra_shp_speed,
-    dra.shp_speed_offset AS dra_shp_speed_offset
-
-FROM whowner.bt_shp_shipments AS s
-
-LEFT JOIN WHOWNER.BT_SHP_SHIPPING_ITEMS AS SI ON
-  (s.shp_shipment_id = SI.SHP_SHIPMENT_ID)
-
-LEFT JOIN whowner.lk_shp_shipments_times AS sst ON
-  (s.shp_shipment_id = sst.shp_shipment_id)
-
-LEFT JOIN whowner.lk_shp_delivery_rule_applied AS dra ON
-  (s.shp_shipment_id = dra.shp_shipment_id)
-
-LEFT JOIN whowner.lk_shp_address AS add_s ON
-  (s.shp_sender_address = add_s.shp_add_id)
-
-LEFT JOIN whowner.lk_shp_address AS add_r ON
-  (s.shp_receiver_address = add_r.shp_add_id)
-
-WHERE
-  s.sit_site_id = '{}'
-  AND s.shp_shipping_mode_id = 'me2'
-  AND s.shp_date_first_visit_id >= timestamp '{}'
-  AND s.shp_date_first_visit_id < timestamp '{}';
+    /* BT_BIDS */
+    bids.ord_order_id,
+    bids.ite_item_id,
+    bids.tim_day_winning_date,
+    bids.tim_time_winning_date,
+    bids.bid_quantity_ok,
+    bids.shp_shipment_id,
+    /* JOIN BT_SHP_SHIPMENTS AND LK_SHP_ADDRESS */
+    shp.receiver_shp_add_city_id,
+    shp.receiver_shp_add_state_id,
+    shp.receiver_shp_add_zip_code
+FROM WHOWNER.BT_BIDS AS bids
+LEFT JOIN (
+    SELECT
+        /* BT_SHP_SHIPMENTS */
+        s.shp_shipment_id,
+        /* LK_SHP_ADDRESS */
+        add_r.shp_add_city_id AS receiver_shp_add_city_id,
+        add_r.shp_add_state_id AS receiver_shp_add_state_id,
+        add_r.shp_add_zip_code AS receiver_shp_add_zip_code
+    FROM WHOWNER.BT_SHP_SHIPMENTS AS s
+    LEFT JOIN whowner.lk_shp_address AS add_r ON
+        (s.shp_receiver_address = add_r.shp_add_id)
+    ) AS shp
+ON (bids.shp_shipment_id = shp.shp_shipment_id)
+WHERE bids.sit_site_id = '{}' 
+    AND bids.tim_day_winning_date >= '{}'
+    AND bids.tim_day_winning_date < '{}'
+    AND bids.photo_id ='TODATE';
 """
 
 
@@ -254,4 +205,4 @@ class ExperimentDataSource(DataSource):
 
     @property
     def template(self):
-        return TEMPLATE_SHIPPING
+        return TEMPLATE_BUYS
