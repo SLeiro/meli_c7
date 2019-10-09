@@ -3,9 +3,13 @@
 
 melitk.analytics
 melitk.fda
-pandas==0.24.2
-scikit-learn==0.21.1
+pandas==0.23.4
+scikit-learn==0.20.2
+numpy==1.16.1
+sklearn-pandas==1.8.0
+papermill==1.0.1
 seaborn
 matplotlib
 pytest
+attrdict
 -e .
