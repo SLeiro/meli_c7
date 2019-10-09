@@ -48,7 +48,7 @@ class QueryMaker:
         self.date_start = date_from
         self.date_stop = date_to
         self.date_delta = timedelta(days=delta)
-        self.project = 'ST'
+        self.project = 'Fore'
         self.site = site
         self.template = template
 
@@ -84,8 +84,8 @@ class QueryMaker:
 
         while current_start < self.date_stop:
             filename = current_start.strftime(self.project + "_" + self.site + "_%Y%m%d.csv")
-            date_from = current_start.strftime("%Y-%m-%d %H:%M:%S")
-            date_to = current_end.strftime("%Y-%m-%d %H:%M:%S")
+            date_from = current_start.strftime("%Y-%m-%d")
+            date_to = current_end.strftime("%Y-%m-%d")
 
             # Get the sql template query
             query_template = self._get_sql_query_template()
