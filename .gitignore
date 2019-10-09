@@ -110,3 +110,4 @@ venv.bak/
 .DS_Store
 
 etl/raw_data/*.csv
+notebooks/tests/*
