@@ -40,6 +40,89 @@ WHERE bids.sit_site_id = '{}'
     AND bids.photo_id ='TODATE';
 """
 
+TEMPLATE_BUYS_FULL = """
+SELECT
+    /* BT_BIDS */
+    bids.ord_order_id,
+    bids.ite_item_id,
+    bids.tim_day_winning_date,
+    bids.tim_time_winning_date,
+    bids.bid_quantity_ok,
+    bids.cus_cust_id_sel,
+    bids.cus_cust_id_buy,
+    bids.ite_catalog_product_id_str,
+    bids.cat_categ_id,
+    bids.dom_domain_id,
+    bids.bid_base_current_price,
+    bids.bid_current_price,
+    bids.ite_base_current_price,
+    bids.ite_site_current_price,
+    bids.shp_shipment_id,
+    /* JOIN BT_SHP_SHIPMENTS AND LK_SHP_ADDRESS */
+    shp.shp_speed,
+    shp.shp_speed_offset,
+    shp.shp_picking_type_id,
+    shp.shp_real_cost,
+    shp.shp_real_cost_usd,
+    shp.shp_send_cost,
+    shp.shp_rule_cost,
+    shp.shp_carrier_cost_calculated,
+    shp.sender_shp_add_city_id,
+    shp.sender_shp_add_state_id,
+    shp.sender_shp_add_zip_code,
+    shp.receiver_shp_add_city_id,
+    shp.receiver_shp_add_state_id,
+    shp.receiver_shp_add_zip_code,
+    /* BT_ODR_ORDER_ITEMS */
+    /*CONCAT('"', OREPLACE(ord.odr_item_title_desc, '"', NULL), '"') AS order_item_title,*/
+    OREPLACE(ord.odr_item_title_desc, ',', NULL) AS order_item_title,
+    /* LK_ITE_ITEM_ATTRIBUTES */
+    att.ite_att_attribute_id,
+    OREPLACE(att.ite_att_value_name, ',', NULL) AS ite_att_value_name
+    /*CONCAT('"', OREPLACE(att.ite_att_value_name, '"', NULL), '"') AS ite_att_value_name*/
+FROM WHOWNER.BT_BIDS AS bids
+LEFT JOIN (
+    SELECT
+        /* BT_SHP_SHIPMENTS */
+        s.shp_shipment_id,
+        s.shp_speed,
+        s.shp_speed_offset,
+        s.shp_picking_type_id,
+        s.shp_real_cost,
+        s.shp_real_cost_usd,
+        s.shp_send_cost,
+        s.shp_rule_cost,
+        s.shp_carrier_cost_calculated,
+        /* LK_SHP_ADDRESS */
+        add_s.shp_add_city_id AS sender_shp_add_city_id,
+        add_s.shp_add_state_id AS sender_shp_add_state_id,
+        add_s.shp_add_zip_code AS sender_shp_add_zip_code,
+        add_r.shp_add_city_id AS receiver_shp_add_city_id,
+        add_r.shp_add_state_id AS receiver_shp_add_state_id,
+        add_r.shp_add_zip_code AS receiver_shp_add_zip_code
+    FROM WHOWNER.BT_SHP_SHIPMENTS AS s
+    LEFT JOIN whowner.lk_shp_address AS add_s ON
+        (s.shp_sender_address = add_s.shp_add_id)
+    LEFT JOIN whowner.lk_shp_address AS add_r ON
+        (s.shp_receiver_address = add_r.shp_add_id)
+    ) AS shp
+ON (bids.shp_shipment_id = shp.shp_shipment_id)
+LEFT JOIN WHOWNER.BT_ODR_ORDER_ITEMS AS ord
+ON (bids.ord_order_id = ord.odr_order_id)
+LEFT JOIN 
+    (SELECT
+        attr.ite_att_attribute_id,
+        attr.ite_att_value_name,
+        attr.ite_item_id
+    FROM WHOWNER.LK_ITE_ITEM_ATTRIBUTE AS attr
+    WHERE attr.ite_att_attribute_id IN ('BRAND', 'MODEL', 'SKU')) AS att
+ON (bids.ite_item_id = att.ite_item_id)
+WHERE bids.sit_site_id = '{}' 
+    AND bids.tim_day_winning_date >= '{}'
+    AND bids.tim_day_winning_date < '{}'
+    AND bids.photo_id ='TODATE';
+"""
+
 
 class QueryMaker:
 
@@ -206,3 +289,10 @@ class ExperimentDataSource(DataSource):
     @property
     def template(self):
         return TEMPLATE_BUYS
+
+
+class FullExperimentDataSource(DataSource):
+
+    @property
+    def template(self):
+        return TEMPLATE_BUYS_FULL
