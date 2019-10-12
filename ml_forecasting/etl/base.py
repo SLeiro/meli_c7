@@ -74,12 +74,10 @@ SELECT
     shp.receiver_shp_add_state_id,
     shp.receiver_shp_add_zip_code,
     /* BT_ODR_ORDER_ITEMS */
-    /*CONCAT('"', OREPLACE(ord.odr_item_title_desc, '"', NULL), '"') AS order_item_title,*/
-    OREPLACE(ord.odr_item_title_desc, ',', NULL) AS order_item_title,
+    REGEXP_REPLACE(ord.odr_item_title_desc, '[,]', '') AS order_item_title,
     /* LK_ITE_ITEM_ATTRIBUTES */
     att.ite_att_attribute_id,
-    OREPLACE(att.ite_att_value_name, ',', NULL) AS ite_att_value_name
-    /*CONCAT('"', OREPLACE(att.ite_att_value_name, '"', NULL), '"') AS ite_att_value_name*/
+    REGEXP_REPLACE(att.ite_att_value_name, '[,"'']', '') AS ite_att_value_name
 FROM WHOWNER.BT_BIDS AS bids
 LEFT JOIN (
     SELECT
@@ -115,7 +113,7 @@ LEFT JOIN
         attr.ite_att_value_name,
         attr.ite_item_id
     FROM WHOWNER.LK_ITE_ITEM_ATTRIBUTE AS attr
-    WHERE attr.ite_att_attribute_id IN ('BRAND', 'MODEL', 'SKU')) AS att
+    WHERE attr.ite_att_attribute_id IN ('BRAND', 'MODEL')) AS att
 ON (bids.ite_item_id = att.ite_item_id)
 WHERE bids.sit_site_id = '{}' 
     AND bids.tim_day_winning_date >= '{}'
