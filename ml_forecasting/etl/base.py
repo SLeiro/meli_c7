@@ -34,9 +34,10 @@ LEFT JOIN (
         (s.shp_receiver_address = add_r.shp_add_id)
     ) AS shp
 ON (bids.shp_shipment_id = shp.shp_shipment_id)
-WHERE bids.sit_site_id = '{}' 
+WHERE bids.sit_site_id = '{}'
     AND bids.tim_day_winning_date >= '{}'
     AND bids.tim_day_winning_date < '{}'
+    AND bids.bid_bid_status = 'W'
     AND bids.photo_id ='TODATE';
 """
 
@@ -115,9 +116,10 @@ LEFT JOIN
     FROM WHOWNER.LK_ITE_ITEM_ATTRIBUTE AS attr
     WHERE attr.ite_att_attribute_id IN ('BRAND', 'MODEL')) AS att
 ON (bids.ite_item_id = att.ite_item_id)
-WHERE bids.sit_site_id = '{}' 
+WHERE bids.sit_site_id = '{}'
     AND bids.tim_day_winning_date >= '{}'
     AND bids.tim_day_winning_date < '{}'
+    AND bids.bid_bid_status = 'W'
     AND bids.photo_id ='TODATE';
 """
 
