@@ -12,11 +12,13 @@ SELECT
     /* BT_BIDS */
     bids.ord_order_id,
     bids.ite_item_id,
+    bids.ite_variation_id,
     bids.tim_day_winning_date,
     bids.tim_time_winning_date,
     bids.bid_quantity_ok,
     bids.shp_shipment_id,
     /* JOIN BT_SHP_SHIPMENTS AND LK_SHP_ADDRESS */
+    shp.shp_shipping_mode_id,
     shp.receiver_shp_add_city_id,
     shp.receiver_shp_add_state_id,
     shp.receiver_shp_add_zip_code
@@ -25,6 +27,7 @@ LEFT JOIN (
     SELECT
         /* BT_SHP_SHIPMENTS */
         s.shp_shipment_id,
+        s.shp_shipping_mode_id,
         /* LK_SHP_ADDRESS */
         add_r.shp_add_city_id AS receiver_shp_add_city_id,
         add_r.shp_add_state_id AS receiver_shp_add_state_id,
@@ -46,6 +49,7 @@ SELECT
     /* BT_BIDS */
     bids.ord_order_id,
     bids.ite_item_id,
+    bids.ite_variation_id,
     bids.tim_day_winning_date,
     bids.tim_time_winning_date,
     bids.bid_quantity_ok,
@@ -60,6 +64,7 @@ SELECT
     bids.ite_site_current_price,
     bids.shp_shipment_id,
     /* JOIN BT_SHP_SHIPMENTS AND LK_SHP_ADDRESS */
+    shp.shp_shipping_mode_id,
     shp.shp_speed,
     shp.shp_speed_offset,
     shp.shp_picking_type_id,
@@ -79,11 +84,14 @@ SELECT
     /* LK_ITE_ITEM_ATTRIBUTES */
     att.ite_att_attribute_id,
     REGEXP_REPLACE(att.ite_att_value_name, '[,"'']', '') AS ite_att_value_name
+    /* BT_FBM_STOCK_PANEL_PH */
+    fbm.inventory_id
 FROM WHOWNER.BT_BIDS AS bids
 LEFT JOIN (
     SELECT
         /* BT_SHP_SHIPMENTS */
         s.shp_shipment_id,
+        s.shp_shipping_mode_id,
         s.shp_speed,
         s.shp_speed_offset,
         s.shp_picking_type_id,
@@ -112,10 +120,18 @@ LEFT JOIN
     (SELECT
         attr.ite_att_attribute_id,
         attr.ite_att_value_name,
-        attr.ite_item_id
+        attr.ite_item_id,
+        attr.sit_site_id
     FROM WHOWNER.LK_ITE_ITEM_ATTRIBUTE AS attr
     WHERE attr.ite_att_attribute_id IN ('BRAND', 'MODEL')) AS att
-ON (bids.ite_item_id = att.ite_item_id)
+ON ((bids.ite_item_id = att.ite_item_id)
+    AND (bids.sit_site_id = att.sit_site_id))
+LEFT JOIN WHOWNER.BT_FBM_STOCK_PANEL_PH AS fbm
+ON (((bids.ite_variation_id = fbm.ite_variation_id) 
+        OR ((bids.ite_variation_id IS NULL) AND (fbm.ite_variation_id IS NULL)))
+    AND (bids.ite_item_id = fbm.ite_item_id)
+    AND (bids.sit_site_id = fbm.sit_site_id)
+    AND (bids.tim_day_winning_date = fbm.tim_day))
 WHERE bids.sit_site_id = '{}'
     AND bids.tim_day_winning_date >= '{}'
     AND bids.tim_day_winning_date < '{}'
