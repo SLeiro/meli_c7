@@ -5,6 +5,7 @@ import numpy as np
 DEFAULT_DTYPES = {
     'ORD_ORDER_ID': np.float,
     'ITE_ITEM_ID': np.float,
+    'ITE_VARIATION_ID': np.object,
     'TIM_DAY_WINNING_DATE': np.object,
     'TIM_TIME_WINNING_DATE': np.int,
     'BID_QUANTITY_OK': np.int,
@@ -18,6 +19,7 @@ DEFAULT_DTYPES = {
     'BID_CURRENT_PRICE': np.float,
     'ITE_BASE_CURRENT_PRICE': np.float,
     'ITE_SITE_CURRENT_PRICE': np.float,
+    'SHP_SHIPPING_MODE_ID': np.object,
     'SHP_SPEED': np.object,
     'SHP_SPEED_OFFSET': np.object,
     'SHP_PICKING_TYPE_ID': np.object,
@@ -29,6 +31,7 @@ DEFAULT_DTYPES = {
     'order_item_title': np.object,
     'ITE_ATT_ATTRIBUTE_ID': np.object,
     'ite_att_value_name': np.object,
+    'INVENTORY_ID': np.object,
 
     'sender_shp_add_city_id': np.object,
     'sender_shp_add_state_id': np.object,
@@ -47,10 +50,12 @@ PARSE_DATES = [
 INTEREST_COLS =  [
     'ORD_ORDER_ID',
     'ITE_ITEM_ID',
+    'ITE_VARIATION_ID',
     'TIM_DAY_WINNING_DATE',
     'TIM_TIME_WINNING_DATE',
     'BID_QUANTITY_OK',
     'SHP_SHIPMENT_ID',
+    'SHP_SHIPPING_MODE_ID',
     'receiver_shp_add_city_id',
     'receiver_shp_add_state_id',
     'receiver_shp_add_zip_code',
