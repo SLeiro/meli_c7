@@ -3,8 +3,8 @@ import numpy as np
 
 # Define Default configs
 DEFAULT_DTYPES = {
-    'ORD_ORDER_ID': np.float,
-    'ITE_ITEM_ID': np.float,
+    'ORD_ORDER_ID': np.int,
+    'ITE_ITEM_ID': np.int,
     'ITE_VARIATION_ID': np.object,
     'TIM_DAY_WINNING_DATE': np.object,
     'TIM_TIME_WINNING_DATE': np.int,
