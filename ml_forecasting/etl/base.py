@@ -83,7 +83,7 @@ SELECT
     REGEXP_REPLACE(ord.odr_item_title_desc, '[,]', '') AS order_item_title,
     /* LK_ITE_ITEM_ATTRIBUTES */
     att.ite_att_attribute_id,
-    REGEXP_REPLACE(att.ite_att_value_name, '[,"'']', '') AS ite_att_value_name
+    REGEXP_REPLACE(att.ite_att_value_name, '[,"'']', '') AS ite_att_value_name,
     /* BT_FBM_STOCK_PANEL_PH */
     fbm.inventory_id
 FROM WHOWNER.BT_BIDS AS bids
