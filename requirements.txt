@@ -3,9 +3,9 @@
 
 melitk.analytics
 melitk.fda
-pandas==0.23.4
+pandas==0.25.1
 scikit-learn==0.20.2
-numpy==1.16.1
+numpy==1.17.2
 sklearn-pandas==1.8.0
 papermill==1.0.1
 seaborn
