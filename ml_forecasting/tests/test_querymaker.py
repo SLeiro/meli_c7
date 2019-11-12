@@ -1,5 +1,5 @@
 from datetime import datetime
-from ml_forecasting.etl.base import TEMPLATE_SHIPPING, QueryMaker
+from ml_forecasting.etl.base import TEMPLATE_BUYS, QueryMaker
 
 
 def test_date_to_querymaker_one_query():
@@ -8,9 +8,9 @@ def test_date_to_querymaker_one_query():
     delta = 7
     site = 'MLB'
 
-    queries = QueryMaker(date_from, date_to, delta, site, TEMPLATE_SHIPPING).queries()
+    queries = QueryMaker(date_from, date_to, delta, site, TEMPLATE_BUYS).queries()
 
-    TEST_TEMPLATE = TEMPLATE_SHIPPING.format('MLB', '2019-08-01 00:00:00', '2019-08-04 00:00:00')
+    TEST_TEMPLATE = TEMPLATE_BUYS.format('MLB', '2019-08-01', '2019-08-04')
 
     assert len(queries) == 1
     assert TEST_TEMPLATE == queries[0][1]
@@ -22,10 +22,10 @@ def test_date_to_querymaker_more_than_one_query():
     delta = 7
     site = 'MLB'
 
-    queries = QueryMaker(date_from, date_to, delta, site, TEMPLATE_SHIPPING).queries()
+    queries = QueryMaker(date_from, date_to, delta, site, TEMPLATE_BUYS).queries()
 
-    TEST_TEMPLATE_1 = TEMPLATE_SHIPPING.format('MLB', '2019-08-01 00:00:00', '2019-08-08 00:00:00')
-    TEST_TEMPLATE_2 = TEMPLATE_SHIPPING.format('MLB', '2019-08-08 00:00:00', '2019-08-11 00:00:00')
+    TEST_TEMPLATE_1 = TEMPLATE_BUYS.format('MLB', '2019-08-01', '2019-08-08')
+    TEST_TEMPLATE_2 = TEMPLATE_BUYS.format('MLB', '2019-08-08', '2019-08-11')
 
     assert len(queries) == 2
     assert TEST_TEMPLATE_1 == queries[0][1]
@@ -38,10 +38,10 @@ def test_train_zipcode_template_querymaker():
     delta = 7
     site = 'MLB'
 
-    queries = QueryMaker(date_from, date_to, delta, site, TEMPLATE_SHIPPING).queries()
+    queries = QueryMaker(date_from, date_to, delta, site, TEMPLATE_BUYS).queries()
 
-    TEST_TEMPLATE_1 = TEMPLATE_SHIPPING.format('MLB', '2019-08-01 00:00:00', '2019-08-08 00:00:00')
-    TEST_TEMPLATE_2 = TEMPLATE_SHIPPING.format('MLB', '2019-08-08 00:00:00', '2019-08-15 00:00:00')
+    TEST_TEMPLATE_1 = TEMPLATE_BUYS.format('MLB', '2019-08-01', '2019-08-08')
+    TEST_TEMPLATE_2 = TEMPLATE_BUYS.format('MLB', '2019-08-08', '2019-08-15')
 
     assert len(queries) == 2
 
