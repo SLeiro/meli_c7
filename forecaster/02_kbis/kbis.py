@@ -402,7 +402,7 @@ class KBIs(object):
         except Exception as e:
             self.raiseError('Error calculating OOT: ' + str(e))
 
-    def fTest(self):
+    def f_test(self):
         '''Fischer Probability Test.'''
         try:
             # length
