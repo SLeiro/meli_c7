@@ -64,7 +64,7 @@
       "punto_de_reorden": 3
     }
   ],
-  "factor_conservacion": 0.8,
+  "factor_conservador": 0.8,
   "listado_sku_meli": [
     {
       "sku_meli": 1
