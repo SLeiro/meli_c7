@@ -64,15 +64,13 @@
       "punto_de_reorden": 3
     }
   ],
-  "factor_conservador": 0.8,
-  "listado_sku_meli": [
-    {
-      "sku_meli": 1
-    }
-  ],
-  "listado_semanas": [
-    {
-      "semana": 1
-    }
-  ]
+  "parametros": {
+    "factor_conservador": 0.8,
+    "semana_a_optimizar": "2019-11-01 00:00:00",
+    "listado_sku_meli": [
+      {
+        "sku_meli": 1
+      }
+    ]
+  }
 }

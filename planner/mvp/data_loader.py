@@ -3,8 +3,9 @@ import json
 
 class DataLoader:
 	def __init__(self, file_name):
+
 		with open('{}'.format(file_name)) as json_file:
-			self.data = json.load(json_file)
+			data = json.load(json_file)
 
 		self.inventarios_iniciales = {}  # dictionary <(skuMeli, FC, semana): valor>
 		self.inventarios_inamovibles = {}  # dictionary <(skuMeli, FC): valor>
@@ -15,44 +16,43 @@ class DataLoader:
 		self.coberturas = {}  # dictionary <(skuMeli, FC, semana): valor>
 		self.puntos_de_reorden = {}  # dictionary <(skuMeli, FC, semana): valor>
 		self.listado_sku_meli = []  # list <skuMeli>
-		self.listado_semanas = []  # list <semanas>
+		self.semana_a_optimizar = None
 		self.factor_consevador = 0
 
-		for item in self.data["inventarios_iniciales"]:
+		for item in data["inventarios_iniciales"]:
 			self.inventarios_iniciales.update(
 				{(item["sku_meli"], item["fc"], item["semana"]): item["valor"]})
 
-		for item in self.data["inventarios_inamovibles"]:
+		for item in data["inventarios_inamovibles"]:
 			self.inventarios_inamovibles.update({(item["sku_meli"], item["fc"]): item[
 				"valor"]})
 
-		for item in self.data["inventarios_en_transito"]:
+		for item in data["inventarios_en_transito"]:
 			self.inventarios_en_transito.update(
 				{(item["sku_meli"], item["fc"], item["semana"]): item["valor"]})
 
-		for item in self.data["fc_por_sku_meli"]:
+		for item in data["fc_por_sku_meli"]:
 			self.fc_por_sku_meli.update({item["sku_meli"]: item["fc"]})
 
-		for item in self.data["tipificaciones"]:
+		for item in data["tipificaciones"]:
 			self.tipificaciones.update({(item["sku_meli"], item["fc"]): item["valor"]})
 
-		for item in self.data["forecasts"]:
+		for item in data["forecasts"]:
 			self.forecasts.update({(item["sku_meli"], item["fc"], item["semana"]): item["valor"]})
 
-		for item in self.data["coberturas"]:
+		for item in data["coberturas"]:
 			self.coberturas.update({(item["sku_meli"], item["fc"], item["semana"]): item["valor"]})
 
-		for item in self.data["puntos_de_reorden"]:
+		for item in data["puntos_de_reorden"]:
 			self.puntos_de_reorden.update(
 				{(item["sku_meli"], item["fc"]): item["punto_de_reorden"]})
 
-		for item in self.data["listado_sku_meli"]:
+		for item in data["parametros"]["listado_sku_meli"]:
 			self.listado_sku_meli.append(item["sku_meli"])
 
-		for item in self.data["listado_semanas"]:
-			self.listado_semanas.append(item["semana"])
+		self.semana_a_optimizar = data["parametros"]["semana_a_optimizar"]
 
-		self.factor_consevador = self.data["factor_conservador"]
+		self.factor_consevador = data["parametros"]["factor_conservador"]
 
 	def get_inventarios_iniciales(self):
 
@@ -93,6 +93,6 @@ class DataLoader:
 
 		return self.listado_sku_meli
 
-	def get_listado_semanas(self):
+	def get_semana_a_optimizar(self):
 
-		return self.listado_semanas
+		return self.semana_a_optimizar
