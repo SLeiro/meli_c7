@@ -72,7 +72,7 @@ class KBIs(object):
         kbi_id_col = self.kbis.columns[1]
         # Value Col
         kbi_value_col = self.kbis.columns[2]
-        return self.kbis.loc[self.kbis[kbi_id_col] == kbi_id, kbi_value_col].values[0]
+        return self.kbis.loc[self.kbis[kbi_id_col] == kbi_id, kbi_value_col][0]
 
     ''' ---------------------------------------------- '''
     ''' ESSENTIALS '''
@@ -140,10 +140,10 @@ class KBIs(object):
             print('Naive Error: Not enough data')
             return np.nan
         # check denominator diferent from 0
-        if sum(x[:m - lag].values) == 0:
+        if sum(x[:m - lag]) == 0:
             return np.nan
         # forecast acc
-        naive_error_value = sum(abs(x[:m - lag].values - x[lag:m].values)) / sum(x[:m - lag].values)
+        naive_error_value = sum(abs(x[:m - lag] - x[lag:m])) / sum(x[:m - lag])
         return naive_error_value
 
     def naive_last_cycle_error(self):
@@ -160,8 +160,8 @@ class KBIs(object):
                 print('Naive Last Year Error: Not enough data')
                 return np.nan
             # forecast
-            naive_last_cycle_error_value = sum(abs(x[:m - c].values - x[c:m].values)) / sum(
-                x[:m - c].values)
+            naive_last_cycle_error_value = sum(abs(x[:m - c] - x[c:m])) / sum(
+                x[:m - c])
             return naive_last_cycle_error_value
         except Exception as e:
             print('Error calculating Naive LY Error: ')
@@ -254,11 +254,11 @@ class KBIs(object):
             acc_coef_0 = np.corrcoef(acc_01, acc_02)[0, 1]
             # ACC half cycle
             # remove first half cycle
-            acc_11_start = c / 2
+            acc_11_start = int(np.ceil(c / 2))
             acc_11_end = m
             # remove last half cycle
             acc_12_start = 0
-            acc_12_end = m - c / 2
+            acc_12_end = round(m - c / 2)
             # sets data
             acc_11 = x[acc_11_start:acc_11_end]
             acc_12 = x[acc_12_start:acc_12_end]
@@ -312,11 +312,11 @@ class KBIs(object):
             acc_coef_0 = np.corrcoef(acc_01, acc_02)[0, 1]
             # ACC half cycle
             # remove first half cycle
-            acc_11_start = c / 2
+            acc_11_start = int(np.ceil(c / 2))
             acc_11_end = m - 1
             # remove last half cycle
             acc_12_start = 0
-            acc_12_end = m - 1 - c / 2
+            acc_12_end = int(np.ceil(m - 1 - c / 2))
             # sets data
             acc_11 = y[acc_11_start:acc_11_end]
             acc_12 = y[acc_12_start:acc_12_end]
@@ -551,3 +551,35 @@ class KBIs(object):
         except Exception as e:
             print('Error calculating fTestChange: ')
             raise Exception(e)
+
+
+
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+    X = np.sin(np.arange(0,stop=36)*6*np.pi/36)
+    plt.plot(X)
+
+    kbi = KBIs()
+    kbi.set_time_series(X)
+    print(kbi.kurtosis())
+    print(kbi.naive_error())
+
+    kbi.set_cycle_length()
+    print(kbi.naive_last_cycle_error())
+    print(kbi.naive_lv_times_naive_ly())
+
+    kbi.set_series_cycles()
+    print(kbi.acc())
+    print(kbi.acc_comp())
+
+    kbi.set_complete_cycles()
+    print(kbi.acc_comp_si())
+    print(kbi.rot())
+    print(kbi.oot())
+    print(kbi.f_test())
+    # print(kbi.sparsity_kbis())
+    # print(kbi.data_sparsity())
+    # print(kbi.y_est_sparsity())
+    # print(kbi.sigma_sparsity())
+    # print(kbi.f_test_change())
+
