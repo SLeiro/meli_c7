@@ -38,7 +38,8 @@ class KBIs(object):
             # Insert KBIs
             self.kbis[cols[1]] = [kbi.kbi_id for kbi in kbis]
         except Exception as e:
-            self.raiseError('Error preparing KBIs: ' + str(e))
+            print('Error preparing KBIs: ')
+            raise Exception(e)
 
     def run_kbi(self, kbi_name, kbi=None):
         '''Function to run specific KBI by name'''
@@ -63,14 +64,15 @@ class KBIs(object):
                 self.kbis.loc[self.kbis[kbi_id_col] == kbi_id, kbi_name_col] = kbi_name
             return kbi_value
         except Exception as e:
-            self.raiseError('Error running KBIs: ' + str(e))
+            print('Error running KBIs: ')
+            raise Exception(e)
 
     def get_kbi_value(self, kbi_id):
         # ID Col
         kbi_id_col = self.kbis.columns[1]
         # Value Col
         kbi_value_col = self.kbis.columns[2]
-        return self.kbis.loc[self.kbis[kbi_id_col] == kbi_id, kbi_value_col].values[0]
+        return self.kbis.loc[self.kbis[kbi_id_col] == kbi_id, kbi_value_col][0]
 
     ''' ---------------------------------------------- '''
     ''' ESSENTIALS '''
@@ -88,7 +90,8 @@ class KBIs(object):
 
             return self.cycle_length
         except Exception as e:
-            self.raiseError('Error in cycle length: ' + str(e))
+            print('Error in cycle length: ')
+            raise Exception(e)
 
     def set_series_cycles(self):
         try:
@@ -96,7 +99,8 @@ class KBIs(object):
             self.series_cycles = float(self.length) / float(self.cycle_length)
             return self.series_cycles
         except Exception as e:
-            self.raiseError('Error setting cycles: ' + str(e))
+            print('Error setting cycles: ')
+            raise Exception(e)
 
     def set_complete_cycles(self):
         try:
@@ -104,7 +108,8 @@ class KBIs(object):
             self.complete_cycles = self.length / self.cycle_length
             return self.complete_cycles
         except Exception as e:
-            self.raiseError('Error in complete cycles: ' + str(e))
+            print('Error in complete cycles: ')
+            raise Exception(e)
 
     ''' ---------------------------------------------- '''
     ''' Volatility '''
@@ -114,7 +119,7 @@ class KBIs(object):
         '''Kurtosis.'''
         try:
             # sets data
-            x = self.data['values']
+            x = self.data
             # num data points
             m = self.length
             # useful data
@@ -122,22 +127,23 @@ class KBIs(object):
             kurtosis_value = x.kurtosis()
             return kurtosis_value
         except Exception as e:
-            self.raiseError('Error calculating Kurtosis: ' + str(e))
+            print('Error calculating Kurtosis: ')
+            raise Exception(e)
 
     def naive_error(self, lag=12):
         # num data points
         m = self.length
         # sets data limiting length
-        x = self.data['values'][:m]
+        x = self.data[:m]
         # check length
         if m <= lag:
             print('Naive Error: Not enough data')
             return np.nan
         # check denominator diferent from 0
-        if sum(x[:m - lag].values) == 0:
+        if sum(x[:m - lag]) == 0:
             return np.nan
         # forecast acc
-        naive_error_value = sum(abs(x[:m - lag].values - x[lag:m].values)) / sum(x[:m - lag].values)
+        naive_error_value = sum(abs(x[:m - lag] - x[lag:m])) / sum(x[:m - lag])
         return naive_error_value
 
     def naive_last_cycle_error(self):
@@ -146,7 +152,7 @@ class KBIs(object):
             # num data points
             m = self.length
             # sets data
-            x = self.data['values'][:m]
+            x = self.data[:m]
             # cycle_length
             c = self.cycle_length
             # check length
@@ -154,11 +160,12 @@ class KBIs(object):
                 print('Naive Last Year Error: Not enough data')
                 return np.nan
             # forecast
-            naive_last_cycle_error_value = sum(abs(x[:m - c].values - x[c:m].values)) / sum(
-                x[:m - c].values)
+            naive_last_cycle_error_value = sum(abs(x[:m - c] - x[c:m])) / sum(
+                x[:m - c])
             return naive_last_cycle_error_value
         except Exception as e:
-            self.raiseError('Error calculating Naive LY Error: ' + str(e))
+            print('Error calculating Naive LY Error: ')
+            raise Exception(e)
 
     def naive_lv_times_naive_ly(self):
         '''Naive last value x Naive last year error.'''
@@ -172,7 +179,8 @@ class KBIs(object):
             naive_lv_times_naive_ly_value = naive_error * naive_ly_error
             return naive_lv_times_naive_ly_value
         except Exception as e:
-            self.raiseError('Error calculating Naive last value x Naive last year error: ' + str(e))
+            print('Error calculating Naive last value x Naive last year error: ')
+            raise Exception(e)
 
     ''' ---------------------------------------------- '''
     ''' Seasonality '''
@@ -186,7 +194,7 @@ class KBIs(object):
                 print('ACC: Not enough data')
                 return False
             # sets data
-            x = self.data['values']
+            x = self.data
             # num data points
             m = self.length
             # useful data
@@ -210,7 +218,8 @@ class KBIs(object):
             acc_value = np.corrcoef(acc_01, acc_02)[0, 1]
             return acc_value
         except Exception as e:
-            self.raiseError('Error calculating ACC: ' + str(e))
+            print('Error calculating ACC: ')
+            raise Exception(e)
 
     def acc_comp(self):
         '''Calculates ACC Comp coeficient.'''
@@ -220,7 +229,7 @@ class KBIs(object):
                 print('ACC Comp: Not enough data')
                 return False
             # sets data
-            x = self.data['values']
+            x = self.data
             # num data points
             m = self.length
             # useful data
@@ -245,11 +254,11 @@ class KBIs(object):
             acc_coef_0 = np.corrcoef(acc_01, acc_02)[0, 1]
             # ACC half cycle
             # remove first half cycle
-            acc_11_start = c / 2
+            acc_11_start = int(np.ceil(c / 2))
             acc_11_end = m
             # remove last half cycle
             acc_12_start = 0
-            acc_12_end = m - c / 2
+            acc_12_end = round(m - c / 2)
             # sets data
             acc_11 = x[acc_11_start:acc_11_end]
             acc_12 = x[acc_12_start:acc_12_end]
@@ -263,7 +272,8 @@ class KBIs(object):
             acc_comp_value = (acc_coef_0 - acc_coef_1) / 2
             return acc_comp_value
         except Exception as e:
-            self.raiseError('Error calculating Compensated ACC:' + str(e))
+            print('Error calculating Compensated ACC:')
+            raise Exception(e)
 
     def acc_comp_si(self):
         '''Calculates ACC SI Comp coeficient.'''
@@ -273,7 +283,7 @@ class KBIs(object):
                 print('ACC Comp SI: Not enough data')
                 return False
             # sets data
-            x = self.data['values']
+            x = self.data
             # num data points
             m = self.length
             # useful data
@@ -302,11 +312,11 @@ class KBIs(object):
             acc_coef_0 = np.corrcoef(acc_01, acc_02)[0, 1]
             # ACC half cycle
             # remove first half cycle
-            acc_11_start = c / 2
+            acc_11_start = int(np.ceil(c / 2))
             acc_11_end = m - 1
             # remove last half cycle
             acc_12_start = 0
-            acc_12_end = m - 1 - c / 2
+            acc_12_end = int(np.ceil(m - 1 - c / 2))
             # sets data
             acc_11 = y[acc_11_start:acc_11_end]
             acc_12 = y[acc_12_start:acc_12_end]
@@ -320,7 +330,8 @@ class KBIs(object):
             acc_comp_si_value = (acc_coef_0 - acc_coef_1) / 2
             return acc_comp_si_value
         except Exception as e:
-            self.raiseError('Error calculating Compensated ACC: ' + str(e))
+            print('Error calculating Compensated ACC: ')
+            raise Exception(e)
 
     ''' ---------------------------------------------- '''
     ''' Trend '''
@@ -330,7 +341,7 @@ class KBIs(object):
         '''Relative Order Trend.'''
         try:
             # sets data
-            x = self.data['values']
+            x = self.data
             # num data points
             m = self.length
             # useful data
@@ -365,7 +376,8 @@ class KBIs(object):
             rot_value = abs((rot_final - rot_initial) / (rot_periods * rot_avg))
             return rot_value
         except Exception as e:
-            self.raiseError('Error calculating ROT:' + str(e))
+            print('Error calculating ROT:')
+            raise Exception(e)
 
     def oot(self):
         '''Ordinal Order Trend.'''
@@ -375,7 +387,7 @@ class KBIs(object):
                 print('OOT: Not enough history')
                 return False
             # sets data
-            x = self.data['values']
+            x = self.data
             # num data points
             m = self.length
             # useful data
@@ -400,7 +412,8 @@ class KBIs(object):
             return oot_value
 
         except Exception as e:
-            self.raiseError('Error calculating OOT: ' + str(e))
+            print('Error calculating OOT: ')
+            raise Exception(e)
 
     def f_test(self):
         '''Fischer Probability Test.'''
@@ -410,7 +423,7 @@ class KBIs(object):
                 print('F Test: Not enough history')
                 return False
             # sets data
-            x = self.data['values']
+            x = self.data
             # num data points
             m = self.length
             # useful data
@@ -418,24 +431,25 @@ class KBIs(object):
             # cycle length
             c = self.cycle_length
             # regresor series
-            z = [i + 1 for i in xrange(M)]
+            z = [i + 1 for i in range(m)]
             z = np.array(z)
             # initialize
             z = sm_tools.add_constant(z)
             model = sm.OLS(x, z, missing='drop')
             results = model.fit()
             # f test
-            fValue = results.f_pvalue
-            return fValue
+            f_value = results.f_pvalue
+            return f_value
 
         except Exception as e:
-            self.raiseError('Error calculating F Prob: ' + str(e))
+            print('Error calculating F Prob: ')
+            raise Exception(e)
 
     ''' ---------------------------------------------- '''
     ''' Sparsity '''
     ''' ---------------------------------------------- '''
 
-    def sparsityKBIs(self):
+    def sparsity_kbis(self):
         '''Returns all sparsity indicators.'''
         try:
             # sets data
@@ -447,9 +461,8 @@ class KBIs(object):
             if m <= 1:
                 print('Sparsity: Not enough data.')
                 return [False, False, False]
-            p = np.zeros((M,))
-            y = np.zeros((M,))
-            l = np.zeros((M,))
+            p = np.zeros((m,))
+            y = np.zeros((m,))
             # initialize
             q = 0
             if x[0] > 0:
@@ -459,7 +472,7 @@ class KBIs(object):
                 p[0] = 2
             y[0] = 0
             # loops through serie
-            for i in range(1, M):
+            for i in range(1, m):
                 if x[i] > 0:
                     p[i] = 1
                     y[i] = alpha * p[i - 1] + (1 - alpha) * y[i - 1]
@@ -468,44 +481,48 @@ class KBIs(object):
                     p[i] = p[i - 1] + 1
                     y[i] = y[i - 1]
 
-            dataSpValue = float(q) / float(M)
-            yEstValue = y[-1]
-            sigmaPValue = np.std(p)
+            data_sp_value = float(q) / float(m)
+            y_est_value = y[-1]
+            sigma_p_value = np.std(p)
 
-            return [dataSpValue, yEstValue, sigmaPValue]
+            return [data_sp_value, y_est_value, sigma_p_value]
 
         except Exception as e:
-            self.raiseError('Error calculating sparsity KBIs: ' + str(e))
+            print('Error calculating sparsity KBIs: ')
+            raise Exception(e)
 
-    def dataSparsity(self):
+    def data_sparsity(self):
         '''Data sparsity.'''
         try:
-            dataSparsityValue = self.sparsityKBIs()[0]
-            return dataSparsityValue
+            data_sparsity_value = self.sparsity_kbis()[0]
+            return data_sparsity_value
         except Exception as e:
-            self.raiseError('Error calculating data sparsity: ' + str(e))
+            print('Error calculating data sparsity: ')
+            raise Exception(e)
 
-    def yEstSparsity(self):
+    def y_est_sparsity(self):
         '''y Estimator sparsity.'''
         try:
-            yEstSparsityValue = self.sparsityKBIs()[1]
-            return yEstSparsityValue
+            y_est_sparsity_value = self.sparsity_kbis()[1]
+            return y_est_sparsity_value
         except Exception as e:
-            self.raiseError('Error calculating y Est sparsity: ' + str(e))
+            print('Error calculating y Est sparsity: ')
+            raise Exception(e)
 
-    def sigmaSparsity(self):
+    def sigma_sparsity(self):
         '''Sigma sparsity.'''
         try:
-            sigmaSparsityValue = self.sparsityKBIs()[2]
-            return sigmaSparsityValue
+            sigma_sparsity_value = self.sparsity_kbis()[2]
+            return sigma_sparsity_value
         except Exception as e:
-            self.raiseError('Error calculating sigma sparsity: ' + str(e))
+            print('Error calculating sigma sparsity: ')
+            raise Exception(e)
 
     ''' ---------------------------------------------- '''
     ''' Behavioral Change '''
     ''' ---------------------------------------------- '''
 
-    def fTestChange(self):
+    def f_test_change(self):
         '''F Test for Behavioral Change'''
         try:
             # length
@@ -513,7 +530,7 @@ class KBIs(object):
                 print('F Test Change: Not enough history')
                 return False
             # sets data
-            x = self.data['values']
+            x = self.data
             # num data points
             m = self.length
             # useful data
@@ -522,14 +539,47 @@ class KBIs(object):
             x = abs(x - x.shift(periods=1, freq=None, axis=0))
             x = x[1:]
             # regresor series
-            z = [i + 1 for i in xrange(M - 1)]
+            z = [i + 1 for i in range(m - 1)]
             z = np.array(z)
             # initialize
             z = sm_tools.add_constant(z)
             model = sm.OLS(x, z, missing='drop')
             results = model.fit()
             # f test
-            fValue = results.f_pvalue
-            return fValue
+            f_value = results.f_pvalue
+            return f_value
         except Exception as e:
-            self.raiseError('Error calculating fTestChange: ' + str(e))
+            print('Error calculating fTestChange: ')
+            raise Exception(e)
+
+
+
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+    X = np.sin(np.arange(0,stop=36)*6*np.pi/36)
+    plt.plot(X)
+
+    kbi = KBIs()
+    kbi.set_time_series(X)
+    print(kbi.kurtosis())
+    print(kbi.naive_error())
+
+    kbi.set_cycle_length()
+    print(kbi.naive_last_cycle_error())
+    print(kbi.naive_lv_times_naive_ly())
+
+    kbi.set_series_cycles()
+    print(kbi.acc())
+    print(kbi.acc_comp())
+
+    kbi.set_complete_cycles()
+    print(kbi.acc_comp_si())
+    print(kbi.rot())
+    print(kbi.oot())
+    print(kbi.f_test())
+    # print(kbi.sparsity_kbis())
+    # print(kbi.data_sparsity())
+    # print(kbi.y_est_sparsity())
+    # print(kbi.sigma_sparsity())
+    # print(kbi.f_test_change())
+
