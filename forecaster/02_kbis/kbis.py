@@ -9,10 +9,7 @@ from dateutil.relativedelta import relativedelta
 
 class KBIs(object):
 
-    def __init__(self):
-        pass
-
-    def set_time_series(self, time_series):
+    def __init__(self, time_series):
         self.data = time_series
         self.length = len(time_series)
         self.max_index = self.length
@@ -447,7 +444,7 @@ class KBIs(object):
         '''Returns all sparsity indicators.'''
         try:
             # sets data
-            x = self.data#['Original Values'] TODO: what is the difference between 'Values' and 'Original Values'???
+            x = self.data
             # sets variables
             m = self.length
             alpha = 0.3
@@ -548,8 +545,7 @@ if __name__ == '__main__':
     X = np.sin(np.arange(0,stop=36)*6*np.pi/36)
     # plt.plot(X)
 
-    kbi = KBIs()
-    kbi.set_time_series(X)
+    kbi = KBIs(X)
     print(kbi.kurtosis())
     print(kbi.naive_error())
 
