@@ -1,49 +1,49 @@
 {
-  "initial_inventory": [
+  "initial_inventories": [
     {
       "sku_meli": 1,
       "fc": "SAO1",
-      "week": 1,
+      "week": "2019-11-01 00:00:00",
       "value": 200
     },
     {
       "sku_meli": 1,
       "fc": "SAO2",
-      "week": 1,
+      "week": "2019-11-01 00:00:00",
       "value": 100
     },
     {
       "sku_meli": 1,
       "fc": "POA",
-      "week": 1,
+      "week": "2019-11-01 00:00:00",
       "value": 50
     },
     {
       "sku_meli": 2,
       "fc": "SAO1",
-      "week": 1,
+      "week": "2019-11-01 00:00:00",
       "value": 200
     },
     {
       "sku_meli": 2,
       "fc": "SAO2",
-      "week": 1,
+      "week": "2019-11-01 00:00:00",
       "value": 100
     },
     {
       "sku_meli": 2,
       "fc": "POA",
-      "week": 1,
+      "week": "2019-11-01 00:00:00",
       "value": 50
     }
   ],
-  "forbidden_inventory": [
+  "forbidden_inventories": [
   ],
-  "traveling_inventory": [
+  "traveling_inventories": [
     {
       "sku_meli": 1,
       "fc": "POA",
-      "week": 1,
+      "week": "2019-11-01 00:00:00",
       "value": 10
     }
   ],
@@ -57,7 +57,7 @@
       "fc": "SAO2"
     }
   ],
-  "typing": [
+  "typings": [
     {
       "sku_meli": 1,
       "value": "FA ALTO"
@@ -71,32 +71,38 @@
     {
       "sku_meli": 1,
       "fc": "SAO",
-      "week": 1,
+      "week": "2019-11-01 00:00:00",
       "value": 70
     },
     {
       "sku_meli": 1,
       "fc": "SAO",
-      "week": 2,
+      "week": "2019-18-01 00:00:00",
+      "value": 70
+    },
+    {
+      "sku_meli": 1,
+      "fc": "SAO",
+      "week": "2019-25-01 00:00:00",
       "value": 70
     },
     {
       "sku_meli": 1,
       "fc": "POA",
-      "week": 1,
-      "value": 60
-    },
-    {
-      "sku_meli": 2,
-      "fc": "SAO",
-      "week": 1,
+      "week": "2019-11-01 00:00:00",
       "value": 70
     },
     {
-      "sku_meli": 2,
+      "sku_meli": 1,
       "fc": "POA",
-      "week": 1,
-      "value": 60
+      "week": "2019-18-01 00:00:00",
+      "value": 70
+    },
+    {
+      "sku_meli": 1,
+      "fc": "POA",
+      "week": "2019-25-01 00:00:00",
+      "value": 70
     }
   ],
   "days_on_hand": [
@@ -109,7 +115,7 @@
     }
   ],
   "parameters": {
-    "conservation_factor": 0.8,
+    "origin_preference_factor": 0.8,
     "optimized_week": "2019-11-01 00:00:00",
     "sku_meli_list": [
       {

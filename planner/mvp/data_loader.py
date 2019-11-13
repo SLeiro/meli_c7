@@ -1,4 +1,5 @@
 import json
+import datetime
 from dao import Dao
 
 
@@ -15,7 +16,7 @@ class DataLoader:
 		self.reorder_points = {}  # dictionary <(skuMeli, FC, semana) : valor>
 		self.sku_meli_list = []  # list <skuMeli>
 		self.optimized_week = None
-		self.conservation_factor = 0
+		self.origin_preference_factor = 0
 
 	def load_from_json(self, file_name):
 
@@ -55,7 +56,7 @@ class DataLoader:
 
 		self.optimized_week = data["parameters"]["optimized_week"]
 
-		self.conservation_factor = data["parameters"]["conservation_factor"]
+		self.origin_preference_factor = data["parameters"]["origin_preference_factor"]
 
 	def load_from_db(self):
 
@@ -77,7 +78,7 @@ class DataLoader:
 
 		return self.traveling_inventories
 
-	def fc_by_sku_meli(self):
+	def get_fc_by_sku_meli(self):
 
 		return self.fc_by_sku_meli
 
@@ -97,8 +98,8 @@ class DataLoader:
 
 		return self.reorder_points
 
-	def get_conservation_factor(self):
-		return self.conservation_factor
+	def get_origin_preference_factor(self):
+		return self.origin_preference_factor
 
 	def get_sku_meli_list(self):
 
@@ -106,4 +107,4 @@ class DataLoader:
 
 	def get_optimized_week(self):
 
-		return self.optimized_week
+		return datetime.datetime.strptime(self.optimized_week, '%Y-%m-%d %H:%M:%S')
