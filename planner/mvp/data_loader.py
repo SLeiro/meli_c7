@@ -5,57 +5,57 @@ from dao import Dao
 class DataLoader:
 	def __init__(self):
 
-		self.inventarios_iniciales = {}  # dictionary <(skuMeli, FC, semana) : valor>
-		self.inventarios_inamovibles = {}  # dictionary <(skuMeli, FC) : valor>
-		self.inventarios_en_transito = {}  # dictionary <(skuMeli, FC, semana) : valor> (llegada)
-		self.fc_por_sku_meli = {}  # dictionary <skuMeli : FC>
-		self.tipificaciones = {}  # dictionary <skuMeli : tipo >
+		self.initial_inventories = {}  # dictionary <(skuMeli, FC, semana) : valor>
+		self.forbidden_inventories = {}  # dictionary <(skuMeli, FC) : valor>
+		self.traveling_inventories = {}  # dictionary <(skuMeli, FC, semana) : valor> (llegada)
+		self.fc_by_sku_meli = {}  # dictionary <skuMeli : FC>
+		self.typings = {}  # dictionary <skuMeli : tipo >
 		self.forecasts = {}  # dictionary <(skuMeli, FC, semana) : valor>
-		self.coberturas = {}  # dictionary <(skuMeli, FC, semana) : valor>
-		self.puntos_de_reorden = {}  # dictionary <(skuMeli, FC, semana) : valor>
-		self.listado_sku_meli = []  # list <skuMeli>
-		self.semana_a_optimizar = None
-		self.factor_consevador = 0
+		self.days_on_hand = {}  # dictionary <(skuMeli, FC, semana) : valor>
+		self.reorder_points = {}  # dictionary <(skuMeli, FC, semana) : valor>
+		self.sku_meli_list = []  # list <skuMeli>
+		self.optimized_week = None
+		self.conservation_factor = 0
 
 	def load_from_json(self, file_name):
 
 		with open('{}'.format(file_name)) as json_file:
 			data = json.load(json_file)
 
-		for item in data["inventarios_iniciales"]:
-			self.inventarios_iniciales.update(
-				{(item["sku_meli"], item["fc"], item["semana"]): item["valor"]})
+		for item in data["initial_inventories"]:
+			self.initial_inventories.update(
+				{(item["sku_meli"], item["fc"], item["week"]): item["value"]})
 
-		for item in data["inventarios_inamovibles"]:
-			self.inventarios_inamovibles.update({(item["sku_meli"], item["fc"]): item[
-				"valor"]})
+		for item in data["forbidden_inventories"]:
+			self.initial_inventories.update({(item["sku_meli"], item["fc"]): item[
+				"value"]})
 
-		for item in data["inventarios_en_transito"]:
-			self.inventarios_en_transito.update(
-				{(item["sku_meli"], item["fc"], item["semana"]): item["valor"]})
+		for item in data["traveling_inventories"]:
+			self.initial_inventories.update(
+				{(item["sku_meli"], item["fc"], item["week"]): item["value"]})
 
-		for item in data["fc_por_sku_meli"]:
-			self.fc_por_sku_meli.update({item["sku_meli"]: item["fc"]})
+		for item in data["fc_by_sku_meli"]:
+			self.fc_by_sku_meli.update({item["sku_meli"]: item["fc"]})
 
-		for item in data["tipificaciones"]:
-			self.tipificaciones.update({item["sku_meli"]: item["valor"]})
+		for item in data["typings"]:
+			self.typings.update({item["sku_meli"]: item["value"]})
 
 		for item in data["forecasts"]:
-			self.forecasts.update({(item["sku_meli"], item["fc"], item["semana"]): item["valor"]})
+			self.forecasts.update({(item["sku_meli"], item["fc"], item["week"]): item["value"]})
 
-		for item in data["coberturas"]:
-			self.coberturas.update({(item["sku_meli"], item["fc"], item["semana"]): item["valor"]})
+		for item in data["days_on_hand"]:
+			self.days_on_hand.update({(item["sku_meli"], item["fc"], item["week"]): item["value"]})
 
-		for item in data["puntos_de_reorden"]:
-			self.puntos_de_reorden.update(
-				{(item["sku_meli"], item["fc"]): item["punto_de_reorden"]})
+		for item in data["reorder_points"]:
+			self.reorder_points.update(
+				{(item["sku_meli"], item["fc"]): item["reorder_point"]})
 
-		for item in data["parametros"]["listado_sku_meli"]:
-			self.listado_sku_meli.append(item["sku_meli"])
+		for item in data["parameters"]["sku_meli_list"]:
+			self.sku_meli_list.append(item["sku_meli"])
 
-		self.semana_a_optimizar = data["parametros"]["semana_a_optimizar"]
+		self.optimized_week = data["parameters"]["optimized_week"]
 
-		self.factor_consevador = data["parametros"]["factor_conservador"]
+		self.conservation_factor = data["parameters"]["conservation_factor"]
 
 	def load_from_db(self):
 
@@ -65,45 +65,45 @@ class DataLoader:
 		dao = Dao(db = config["db"], host = config["host"], port = config["port"],
 				  user = config["user"], password = config["password"], schema = config["schema"])
 
-	def get_inventarios_iniciales(self):
+	def get_initial_inventories(self):
 
-		return self.inventarios_iniciales
+		return self.initial_inventories
 
-	def get_inventarios_inamovibles(self):
+	def get_forbidden_inventories(self):
 
-		return self.inventarios_inamovibles
+		return self.forbidden_inventories
 
-	def get_inventarios_en_transito(self):
+	def get_traveling_inventories(self):
 
-		return self.inventarios_en_transito
+		return self.traveling_inventories
 
-	def get_fc_por_sku_meli(self):
+	def fc_by_sku_meli(self):
 
-		return self.fc_por_sku_meli
+		return self.fc_by_sku_meli
 
-	def get_tipificaciones(self):
+	def get_typings(self):
 
-		return self.tipificaciones
+		return self.typings
 
 	def get_forecasts(self):
 
 		return self.forecasts
 
-	def get_coberturas(self):
+	def get_days_on_hand(self):
 
-		return self.coberturas
+		return self.days_on_hand
 
-	def get_puntos_de_reorden(self):
+	def get_reorder_points(self):
 
-		return self.puntos_de_reorden
+		return self.reorder_points
 
-	def get_factor_consevacion(self):
-		return self.factor_consevador
+	def get_conservation_factor(self):
+		return self.conservation_factor
 
-	def get_listado_sku_meli(self):
+	def get_sku_meli_list(self):
 
-		return self.listado_sku_meli
+		return self.sku_meli_list
 
-	def get_semana_a_optimizar(self):
+	def get_optimized_week(self):
 
-		return self.semana_a_optimizar
+		return self.optimized_week

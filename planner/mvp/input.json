@@ -1,5 +1,5 @@
 {
-  "initial_stocks": [
+  "initial_inventory": [
     {
       "sku_meli": 1,
       "fc": "SAO1",
@@ -37,9 +37,9 @@
       "value": 50
     }
   ],
-  "inventarios_inamovibles": [
+  "forbidden_inventory": [
   ],
-  "inventarios_en_transito": [
+  "traveling_inventory": [
     {
       "sku_meli": 1,
       "fc": "POA",
@@ -47,7 +47,7 @@
       "value": 10
     }
   ],
-  "fc_por_sku_meli": [
+  "fc_by_sku_meli": [
     {
       "sku_meli": 1,
       "fc": "SAO1"
@@ -57,7 +57,7 @@
       "fc": "SAO2"
     }
   ],
-  "tipificaciones": [
+  "typing": [
     {
       "sku_meli": 1,
       "value": "FA ALTO"
@@ -99,19 +99,19 @@
       "value": 60
     }
   ],
-  "coberturas": [
+  "days_on_hand": [
   ],
-  "puntos_de_reorden": [
+  "reorder_points": [
     {
       "sku_meli": 1,
       "fc": "POA",
-      "punto_de_reorden": 3
+      "reorder_point": 3
     }
   ],
-  "parametros": {
-    "factor_conservador": 0.8,
-    "week_a_optimizar": "2019-11-01 00:00:00",
-    "listado_sku_meli": [
+  "parameters": {
+    "conservation_factor": 0.8,
+    "optimized_week": "2019-11-01 00:00:00",
+    "sku_meli_list": [
       {
         "sku_meli": 1
       }
