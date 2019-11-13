@@ -1,8 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
-import statsmodels.formula.api as sm
-import statsmodels.tools.tools as sm_tools
+from sklearn.linear_model import LinearRegression
+from sklearn.feature_selection import f_regression
 import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -396,15 +396,13 @@ class KBIs(object):
             c = self.cycle_length
             # regresor series
             z = [i + 1 for i in range(m)]
-            z = np.array(z)
+            z = np.expand_dims(np.array(z), axis=1)
             # initialize
-            z = sm_tools.add_constant(z)
-            model = sm.OLS(x, z, missing='drop')
-            results = model.fit()
-            params = results.params
+            model = LinearRegression()
+            model = model.fit(z,x)
             # calculates oot
-            slope = params[1]
-            intersection = params[0]
+            slope = model.coef_
+            intersection = model.intercept_
             if int == 0:
                 print('OOT: Division by 0')
                 return False
@@ -432,13 +430,9 @@ class KBIs(object):
             c = self.cycle_length
             # regresor series
             z = [i + 1 for i in range(m)]
-            z = np.array(z)
-            # initialize
-            z = sm_tools.add_constant(z)
-            model = sm.OLS(x, z, missing='drop')
-            results = model.fit()
+            z = np.expand_dims(np.array(z), axis=1)
             # f test
-            f_value = results.f_pvalue
+            f_value = f_regression(z, x)[1][0]
             return f_value
 
         except Exception as e:
@@ -453,7 +447,7 @@ class KBIs(object):
         '''Returns all sparsity indicators.'''
         try:
             # sets data
-            x = self.data['Original Values']
+            x = self.data#['Original Values'] TODO: what is the difference between 'Values' and 'Original Values'???
             # sets variables
             m = self.length
             alpha = 0.3
@@ -536,17 +530,12 @@ class KBIs(object):
             # useful data
             x = x[:m]
             # abs diference
-            x = abs(x - x.shift(periods=1, freq=None, axis=0))
-            x = x[1:]
+            x = abs(x[1:]-x[:-1])
             # regresor series
             z = [i + 1 for i in range(m - 1)]
-            z = np.array(z)
-            # initialize
-            z = sm_tools.add_constant(z)
-            model = sm.OLS(x, z, missing='drop')
-            results = model.fit()
+            z = np.expand_dims(np.array(z), axis=1)
             # f test
-            f_value = results.f_pvalue
+            f_value = f_regression(z, x)[1][0]
             return f_value
         except Exception as e:
             print('Error calculating fTestChange: ')
@@ -555,9 +544,9 @@ class KBIs(object):
 
 
 if __name__ == '__main__':
-    import matplotlib.pyplot as plt
+    # import matplotlib.pyplot as plt
     X = np.sin(np.arange(0,stop=36)*6*np.pi/36)
-    plt.plot(X)
+    # plt.plot(X)
 
     kbi = KBIs()
     kbi.set_time_series(X)
@@ -577,9 +566,9 @@ if __name__ == '__main__':
     print(kbi.rot())
     print(kbi.oot())
     print(kbi.f_test())
-    # print(kbi.sparsity_kbis())
-    # print(kbi.data_sparsity())
-    # print(kbi.y_est_sparsity())
-    # print(kbi.sigma_sparsity())
-    # print(kbi.f_test_change())
+    print(kbi.sparsity_kbis())
+    print(kbi.data_sparsity())
+    print(kbi.y_est_sparsity())
+    print(kbi.sigma_sparsity())
+    print(kbi.f_test_change())
 
