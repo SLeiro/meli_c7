@@ -1,6 +1,7 @@
 import json
 from dao import Dao
 
+
 class DataLoader:
 	def __init__(self):
 
@@ -56,8 +57,13 @@ class DataLoader:
 
 		self.factor_consevador = data["parametros"]["factor_conservador"]
 
-	def load_from_db(self, file_name):
-		dao = Dao(db = 'localhost', )
+	def load_from_db(self):
+
+		with open('{}'.format('config.json')) as json_file:
+			config = json.load(json_file)
+
+		dao = Dao(db = config["db"], host = config["host"], port = config["port"],
+				  user = config["user"], password = config["password"], schema = config["schema"])
 
 	def get_inventarios_iniciales(self):
 

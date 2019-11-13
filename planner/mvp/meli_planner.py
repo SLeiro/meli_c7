@@ -1,16 +1,16 @@
 from data_loader import DataLoader
 
-''' Input '''
-
 data_loader = DataLoader()
 
 data_loader.load_from_json(file_name = 'input.json')
 
-inventarios_iniciales = data_loader.get_inventarios_iniciales()
+data_loader.load_from_db()
 
-inventarios_inamovibles = data_loader.get_inventarios_inamovibles()
+initial_stocks = data_loader.get_inventarios_iniciales()
 
-inventarios_en_transito = data_loader.get_inventarios_en_transito()
+forbidden_stocks = data_loader.get_inventarios_inamovibles()
+
+in_transit_stocks = data_loader.get_inventarios_en_transito()
 
 fc_por_sku_meli = data_loader.get_fc_por_sku_meli()
 
@@ -18,9 +18,7 @@ tipificaciones = data_loader.get_tipificaciones()
 
 forecasts = data_loader.get_forecasts()
 
-coberturas = data_loader.get_coberturas()
-
-puntos_de_reorden = data_loader.get_puntos_de_reorden()
+days_on_hand = data_loader.get_coberturas()
 
 factor_consevacion = data_loader.get_factor_consevacion()
 
@@ -36,11 +34,11 @@ for sku_meli in listado_sku_meli:
 	# print((sku_meli, 'SAO1', semana))
 
 	# calculo el stock disponible en San Pablo
-	stock_disponible_SAO_1 = inventarios_iniciales[(sku_meli, 'SAO1', semana)]
+	available_stock_SAO_1 = inventarios_iniciales[(sku_meli, 'SAO1', semana)]
 	if (sku_meli, 'SAO1', semana) in inventarios_inamovibles.keys():
 		stock_disponible_SAO_1 -= inventarios_inamovibles[(sku_meli, 'SAO1', semana)]
 
-	stock_disponible_SAO_2 = inventarios_iniciales[(sku_meli, 'SAO2', semana)]
+	available_stock_SAO_2 = inventarios_iniciales[(sku_meli, 'SAO2', semana)]
 	if (sku_meli, 'SAO2', semana) in inventarios_inamovibles.keys():
 		stock_disponible_SAO_2 -= inventarios_inamovibles[(sku_meli, 'SAO2', semana)]
 

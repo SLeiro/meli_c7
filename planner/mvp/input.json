@@ -1,40 +1,40 @@
 {
-  "inventarios_iniciales": [
+  "initial_stocks": [
     {
       "sku_meli": 1,
       "fc": "SAO1",
-      "semana": 1,
-      "valor": 200
+      "week": 1,
+      "value": 200
     },
     {
       "sku_meli": 1,
       "fc": "SAO2",
-      "semana": 1,
-      "valor": 100
+      "week": 1,
+      "value": 100
     },
     {
       "sku_meli": 1,
       "fc": "POA",
-      "semana": 1,
-      "valor": 50
+      "week": 1,
+      "value": 50
     },
     {
       "sku_meli": 2,
       "fc": "SAO1",
-      "semana": 1,
-      "valor": 200
+      "week": 1,
+      "value": 200
     },
     {
       "sku_meli": 2,
       "fc": "SAO2",
-      "semana": 1,
-      "valor": 100
+      "week": 1,
+      "value": 100
     },
     {
       "sku_meli": 2,
       "fc": "POA",
-      "semana": 1,
-      "valor": 50
+      "week": 1,
+      "value": 50
     }
   ],
   "inventarios_inamovibles": [
@@ -43,7 +43,8 @@
     {
       "sku_meli": 1,
       "fc": "POA",
-      "valor": 10
+      "week": 1,
+      "value": 10
     }
   ],
   "fc_por_sku_meli": [
@@ -59,43 +60,43 @@
   "tipificaciones": [
     {
       "sku_meli": 1,
-      "valor": "FA ALTO"
+      "value": "FA ALTO"
     },
     {
       "sku_meli": 2,
-      "valor": "FA BAJO"
+      "value": "FA BAJO"
     }
   ],
   "forecasts": [
     {
       "sku_meli": 1,
       "fc": "SAO",
-      "semana": 1,
-      "valor": 70
+      "week": 1,
+      "value": 70
     },
     {
       "sku_meli": 1,
       "fc": "SAO",
-      "semana": 2,
-      "valor": 70
+      "week": 2,
+      "value": 70
     },
     {
       "sku_meli": 1,
       "fc": "POA",
-      "semana": 1,
-      "valor": 60
+      "week": 1,
+      "value": 60
     },
     {
       "sku_meli": 2,
       "fc": "SAO",
-      "semana": 1,
-      "valor": 70
+      "week": 1,
+      "value": 70
     },
     {
       "sku_meli": 2,
       "fc": "POA",
-      "semana": 1,
-      "valor": 60
+      "week": 1,
+      "value": 60
     }
   ],
   "coberturas": [
@@ -109,7 +110,7 @@
   ],
   "parametros": {
     "factor_conservador": 0.8,
-    "semana_a_optimizar": "2019-11-01 00:00:00",
+    "week_a_optimizar": "2019-11-01 00:00:00",
     "listado_sku_meli": [
       {
         "sku_meli": 1
