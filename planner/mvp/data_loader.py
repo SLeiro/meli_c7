@@ -2,22 +2,24 @@ import json
 
 
 class DataLoader:
-	def __init__(self, file_name):
+	def __init__(self):
 
-		with open('{}'.format(file_name)) as json_file:
-			data = json.load(json_file)
-
-		self.inventarios_iniciales = {}  # dictionary <(skuMeli, FC, semana): valor>
-		self.inventarios_inamovibles = {}  # dictionary <(skuMeli, FC): valor>
-		self.inventarios_en_transito = {}  # dictionary <(skuMeli, FC, semana): valor> (llegada)
-		self.fc_por_sku_meli = {}  # dictionary <skuMeli: FC>
-		self.tipificaciones = {}  # dictionary <(skuMeli, FC): tipo >
-		self.forecasts = {}  # dictionary <(skuMeli, FC, semana): valor>
-		self.coberturas = {}  # dictionary <(skuMeli, FC, semana): valor>
-		self.puntos_de_reorden = {}  # dictionary <(skuMeli, FC, semana): valor>
+		self.inventarios_iniciales = {}  # dictionary <(skuMeli, FC, semana) : valor>
+		self.inventarios_inamovibles = {}  # dictionary <(skuMeli, FC) : valor>
+		self.inventarios_en_transito = {}  # dictionary <(skuMeli, FC, semana) : valor> (llegada)
+		self.fc_por_sku_meli = {}  # dictionary <skuMeli : FC>
+		self.tipificaciones = {}  # dictionary <skuMeli : tipo >
+		self.forecasts = {}  # dictionary <(skuMeli, FC, semana) : valor>
+		self.coberturas = {}  # dictionary <(skuMeli, FC, semana) : valor>
+		self.puntos_de_reorden = {}  # dictionary <(skuMeli, FC, semana) : valor>
 		self.listado_sku_meli = []  # list <skuMeli>
 		self.semana_a_optimizar = None
 		self.factor_consevador = 0
+
+	def load_from_json(self, file_name):
+
+		with open('{}'.format(file_name)) as json_file:
+			data = json.load(json_file)
 
 		for item in data["inventarios_iniciales"]:
 			self.inventarios_iniciales.update(
@@ -35,7 +37,7 @@ class DataLoader:
 			self.fc_por_sku_meli.update({item["sku_meli"]: item["fc"]})
 
 		for item in data["tipificaciones"]:
-			self.tipificaciones.update({(item["sku_meli"], item["fc"]): item["valor"]})
+			self.tipificaciones.update({item["sku_meli"]: item["valor"]})
 
 		for item in data["forecasts"]:
 			self.forecasts.update({(item["sku_meli"], item["fc"], item["semana"]): item["valor"]})

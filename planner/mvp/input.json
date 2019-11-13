@@ -17,28 +17,53 @@
       "fc": "POA",
       "semana": 1,
       "valor": 50
+    },
+    {
+      "sku_meli": 2,
+      "fc": "SAO1",
+      "semana": 1,
+      "valor": 200
+    },
+    {
+      "sku_meli": 2,
+      "fc": "SAO2",
+      "semana": 1,
+      "valor": 100
+    },
+    {
+      "sku_meli": 2,
+      "fc": "POA",
+      "semana": 1,
+      "valor": 50
     }
   ],
   "inventarios_inamovibles": [
   ],
   "inventarios_en_transito": [
+    {
+      "sku_meli": 1,
+      "fc": "POA",
+      "valor": 10
+    }
   ],
   "fc_por_sku_meli": [
     {
       "sku_meli": 1,
       "fc": "SAO1"
+    },
+    {
+      "sku_meli": 2,
+      "fc": "SAO2"
     }
   ],
   "tipificaciones": [
     {
       "sku_meli": 1,
-      "fc": "SAO",
-      "valor": "FORECASTEABLE"
+      "valor": "FA ALTO"
     },
     {
-      "sku_meli": 1,
-      "fc": "POA",
-      "valor": "FORECASTEABLE"
+      "sku_meli": 2,
+      "valor": "FA BAJO"
     }
   ],
   "forecasts": [
@@ -50,6 +75,24 @@
     },
     {
       "sku_meli": 1,
+      "fc": "SAO",
+      "semana": 2,
+      "valor": 70
+    },
+    {
+      "sku_meli": 1,
+      "fc": "POA",
+      "semana": 1,
+      "valor": 60
+    },
+    {
+      "sku_meli": 2,
+      "fc": "SAO",
+      "semana": 1,
+      "valor": 70
+    },
+    {
+      "sku_meli": 2,
       "fc": "POA",
       "semana": 1,
       "valor": 60

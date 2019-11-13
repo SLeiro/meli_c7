@@ -2,7 +2,9 @@ from data_loader import DataLoader
 
 ''' Input '''
 
-data_loader = DataLoader(file_name = 'input.json')
+data_loader = DataLoader()
+
+data_loader.load_from_json(file_name = 'input.json')
 
 inventarios_iniciales = data_loader.get_inventarios_iniciales()
 
