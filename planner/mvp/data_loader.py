@@ -1,5 +1,5 @@
 import json
-
+from dao import Dao
 
 class DataLoader:
 	def __init__(self):
@@ -55,6 +55,9 @@ class DataLoader:
 		self.semana_a_optimizar = data["parametros"]["semana_a_optimizar"]
 
 		self.factor_consevador = data["parametros"]["factor_conservador"]
+
+	def load_from_db(self, file_name):
+		dao = Dao(db = 'localhost', )
 
 	def get_inventarios_iniciales(self):
 
