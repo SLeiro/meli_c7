@@ -41,9 +41,9 @@ for sku_meli in sku_meli_list:
 	if (sku_meli, 'PAO', week_1) in traveling_inventories.keys():
 		available_stock_POA += traveling_inventories[(sku_meli, 'POA', week_1)]
 
-	review_cicle_forecast_SAO = forecasts[(sku_meli, 'SAO', week_1)] + \
+	forecast_next_2_weeks_SAO = forecasts[(sku_meli, 'SAO', week_1)] + \
 								forecasts[(sku_meli, 'SAO', week_2)]
-	review_cicle_forecast_POA = forecasts[(sku_meli, 'POA', week_1)] + \
+	forecast_next_2_weeks_POA = forecasts[(sku_meli, 'POA', week_1)] + \
 								forecasts[(sku_meli, 'SAO', week_2)]
 
 	typing = typings[sku_meli]
@@ -61,16 +61,26 @@ for sku_meli in sku_meli_list:
 		objective_stock_POA = 0
 		objective_stock_SAO = 0
 
-	if available_stock_SAO >= objective_stock_SAO + review_cicle_forecast_SAO:
+	if available_stock_SAO >= objective_stock_SAO + forecast_next_2_weeks_SAO:
 		w3_forecast_SAO = forecasts[(sku_meli, 'SAO', week_3)]
 		w3_forecast_POA = forecasts[(sku_meli, 'POA', week_3)]
 
-		transfer_quantity = ((w3_forecast_POA / w3_forecast_SAO) *
-							 (available_stock_SAO - review_cicle_forecast_SAO)
-							 - available_stock_POA + review_cicle_forecast_POA) / \
+		optimized_transfer = ((w3_forecast_POA / w3_forecast_SAO) *
+							 (available_stock_SAO - forecast_next_2_weeks_SAO)
+							 - available_stock_POA + forecast_next_2_weeks_POA) / \
 							(1 + w3_forecast_POA / w3_forecast_SAO)
+
+		# We check if the transfer quantity calculated doesn't break stocks in either SAO or POA
+
+		min_required_transfer = objective_stock_POA - (available_stock_POA - forecast_next_2_weeks_POA)
+		max_required_transfer = objective_stock_SAO - (available_stock_SAO - forecast_next_2_weeks_SAO)
+
+		optimized_transfer = max(optimized_transfer, min_required_transfer)
+		optimized_transfer = min(optimized_transfer, max_required_transfer)
+
+
 	else:
-		transfer_quantity = 0
+		transfer_quantity = 0 #TODO: pending business definition
 
 	'''SAO1 and SAO2 splitting'''
 	fc_sao_seller = fc_by_sku_meli[sku_meli]
