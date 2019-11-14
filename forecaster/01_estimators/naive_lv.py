@@ -1,7 +1,4 @@
-import os
-import pandas as pd
 import numpy as np
-import datetime
 from sklearn.base import BaseEstimator
 
 
@@ -10,6 +7,9 @@ class NaiveLV(BaseEstimator):
 
     def __init__(self, lag):
         self.lag = lag
+        self.N = 0
+        self.X = np.array([])
+        self.forecast = np.array([])
 
     def fit(self, X, N):
         '''
@@ -45,7 +45,8 @@ class NaiveLV(BaseEstimator):
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
-    arr = np.sin(np.arange(0,stop=36)*6*np.pi/36)
+
+    arr = np.sin(np.arange(0, stop=36) * 6 * np.pi / 36)
     nv = NaiveLV(5)
     fitted = nv.fit(arr, 4)
     plt.plot(arr)
