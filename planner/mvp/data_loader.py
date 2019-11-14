@@ -6,6 +6,7 @@ from dao import Dao
 class DataLoader:
 	def __init__(self):
 
+		self.date_format = '%Y-%m-%d %H:%M:%S'
 		self.initial_inventories = {}  # dictionary <(skuMeli, FC, semana) : valor>
 		self.forbidden_inventories = {}  # dictionary <(skuMeli, FC) : valor>
 		self.traveling_inventories = {}  # dictionary <(skuMeli, FC, semana) : valor> (llegada)
@@ -23,17 +24,20 @@ class DataLoader:
 		with open('{}'.format(file_name)) as json_file:
 			data = json.load(json_file)
 
+		# print(data["initial_inventories"])
 		for item in data["initial_inventories"]:
+			week = datetime.datetime.strptime(item["week"], self.date_format)
 			self.initial_inventories.update(
-				{(item["sku_meli"], item["fc"], item["week"]): item["value"]})
+				{(item["sku_meli"], item["fc"], week): item["value"]})
 
 		for item in data["forbidden_inventories"]:
 			self.initial_inventories.update({(item["sku_meli"], item["fc"]): item[
 				"value"]})
 
 		for item in data["traveling_inventories"]:
+			week = datetime.datetime.strptime(item["week"], self.date_format)
 			self.initial_inventories.update(
-				{(item["sku_meli"], item["fc"], item["week"]): item["value"]})
+				{(item["sku_meli"], item["fc"], week): item["value"]})
 
 		for item in data["fc_by_sku_meli"]:
 			self.fc_by_sku_meli.update({item["sku_meli"]: item["fc"]})
@@ -42,10 +46,12 @@ class DataLoader:
 			self.typings.update({item["sku_meli"]: item["value"]})
 
 		for item in data["forecasts"]:
-			self.forecasts.update({(item["sku_meli"], item["fc"], item["week"]): item["value"]})
+			week = datetime.datetime.strptime(item["week"], self.date_format)
+			self.forecasts.update({(item["sku_meli"], item["fc"], week): item["value"]})
 
 		for item in data["days_on_hand"]:
-			self.days_on_hand.update({(item["sku_meli"], item["fc"], item["week"]): item["value"]})
+			week = datetime.datetime.strptime(item["week"], self.date_format)
+			self.days_on_hand.update({(item["sku_meli"], item["fc"], week): item["value"]})
 
 		for item in data["reorder_points"]:
 			self.reorder_points.update(

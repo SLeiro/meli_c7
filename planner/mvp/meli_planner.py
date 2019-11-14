@@ -6,6 +6,7 @@ data_loader.load_from_json(file_name = 'input.json')
 # data_loader.load_from_db()
 
 initial_inventories = data_loader.get_initial_inventories()
+# print(initial_inventories)
 forbidden_inventories = data_loader.get_forbidden_inventories()
 traveling_inventories = data_loader.get_traveling_inventories()
 fc_by_sku_meli = data_loader.get_fc_by_sku_meli()
@@ -25,6 +26,7 @@ week_3 = data_loader.get_optimized_week() + relativedelta(weeks = 2)
 for sku_meli in sku_meli_list:
 
 	# Available stock in SAO
+	print(initial_inventories)
 	available_stock_SAO_1 = initial_inventories[(sku_meli, 'SAO1', week_1)]
 	if (sku_meli, 'SAO1', week_1) in forbidden_inventories.keys():
 		available_stock_SAO_1 -= forbidden_inventories[(sku_meli, 'SAO1', week_1)]
