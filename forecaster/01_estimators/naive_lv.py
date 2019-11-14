@@ -40,11 +40,14 @@ class NaiveLV(BaseEstimator):
         return self
 
     def predict(self, first_date):
-        return self.forecast[first_date:self.N]
+        return self.forecast[first_date:]
 
 
 if __name__ == '__main__':
-    arr = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
-    nv = naiveLV(5)
+    import matplotlib.pyplot as plt
+    arr = np.sin(np.arange(0,stop=36)*6*np.pi/36)
+    nv = NaiveLV(5)
     fitted = nv.fit(arr, 4)
-    print(nv.predict(1))
+    plt.plot(arr)
+    plt.plot(nv.predict(0))
+    plt.show()
