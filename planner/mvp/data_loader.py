@@ -76,9 +76,12 @@ class DataLoader:
 		dao = Dao(db = config["db"], host = config["host"], port = config["port"],
 				  user = config["user"], password = config["password"], schema = config["schema"])
 
-	def get_initial_inventories(self):
+	def get_initial_inventories(self, sku_meli, fc):
 
-		return self.initial_inventories
+		if (sku_meli, fc) in self.initial_inventories.keys():
+			return self.initial_inventories[(sku_meli, fc)]
+		else:
+			return None
 
 	def get_forbidden_inventories(self):
 

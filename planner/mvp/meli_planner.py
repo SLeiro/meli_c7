@@ -5,7 +5,6 @@ data_loader = DataLoader()
 data_loader.load_from_json(file_name = 'input.json')
 # data_loader.load_from_db()
 
-initial_inventories = data_loader.get_initial_inventories()
 forbidden_inventories = data_loader.get_forbidden_inventories()
 traveling_inventories = data_loader.get_traveling_inventories()
 fc_by_sku_meli = data_loader.get_fc_by_sku_meli()
@@ -27,11 +26,11 @@ for sku_meli in sku_meli_list:
 
 	# Available stock in SAO
 	# print(initial_inventories)
-	available_stock_SAO_1 = initial_inventories[(sku_meli, 'SAO1')]
+	available_stock_SAO_1 = data_loader.get_initial_inventories(sku_meli, 'SAO1')
 	if (sku_meli, 'SAO1', week_1) in forbidden_inventories.keys():
 		available_stock_SAO_1 -= forbidden_inventories[(sku_meli, 'SAO1')]
 
-	available_stock_SAO_2 = initial_inventories[(sku_meli, 'SAO2')]
+	available_stock_SAO_2 = data_loader.get_initial_inventories(sku_meli, 'SAO2')
 	if (sku_meli, 'SAO2', week_1) in forbidden_inventories.keys():
 		available_stock_SAO_2 -= forbidden_inventories[(sku_meli, 'SAO2')]
 
@@ -39,7 +38,7 @@ for sku_meli in sku_meli_list:
 
 	# Available stock in POA
 	# TODO: is there any forbidden inventory in POA that we should be taking into account?
-	available_stock_POA = initial_inventories[(sku_meli, 'POA')]
+	available_stock_POA = data_loader.get_initial_inventories(sku_meli, 'POA')
 	if (sku_meli, 'PAO', week_1) in traveling_inventories.keys():
 		available_stock_POA += traveling_inventories[(sku_meli, 'POA')]
 
@@ -49,7 +48,8 @@ for sku_meli in sku_meli_list:
 								forecasts[(sku_meli, 'SAO', week_2)]
 
 	print('available SAO: {}. available POA: {}'.format(available_stock_SAO, available_stock_POA))
-	print('fcst 2 weeks SAO: {}. fcst 2 weeks POA: {}'.format(forecast_next_2_weeks_SAO, forecast_next_2_weeks_POA))
+	print('fcst 2 weeks SAO: {}. fcst 2 weeks POA: {}'.format(forecast_next_2_weeks_SAO,
+															  forecast_next_2_weeks_POA))
 
 	typing = typings[sku_meli]
 
@@ -79,9 +79,9 @@ for sku_meli in sku_meli_list:
 		print('optimized transfer before bounds : {}'.format(optimized_transfer))
 		# We check if the transfer quantity calculated doesn't break stocks in either SAO or POA
 		min_required_transfer = objective_stock_POA - (
-					available_stock_POA - forecast_next_2_weeks_POA)
+				available_stock_POA - forecast_next_2_weeks_POA)
 		max_required_transfer = - objective_stock_SAO + (
-					available_stock_SAO - forecast_next_2_weeks_SAO)
+				available_stock_SAO - forecast_next_2_weeks_SAO)
 
 		print('min bound: {}. max bound: {}'.format(min_required_transfer, max_required_transfer))
 
@@ -104,23 +104,14 @@ for sku_meli in sku_meli_list:
 	transf_fc_sao_seller = 0
 	transf_fc_sao_other = 0
 
-	if optimized_transfer <= initial_inventories[(sku_meli, fc_sao_other)]:
+	if optimized_transfer <= data_loader.get_initial_inventories(sku_meli, fc_sao_other):
 		transfer_fc_sao_other = optimized_transfer
 		transfer_fc_sao_seller = 0
 	else:
-		transfer_fc_sao_other = initial_inventories[(sku_meli, fc_sao_seller)]
+		transfer_fc_sao_other = data_loader.get_initial_inventories(sku_meli, fc_sao_seller)
 		transfer_fc_sao_seller = optimized_transfer - transfer_fc_sao_other
 
 	optimized_transfers.update({(sku_meli, fc_sao_seller, 'POA'): transfer_fc_sao_seller})
 	optimized_transfers.update({(sku_meli, fc_sao_other, 'POA'): transfer_fc_sao_other})
 
-# final_sao_seller = initial_inventories[(sku_meli, fc_sao_seller, week)] \
-# 				   - transfer_fc_sao_seller
-# final_sao_other = initial_inventories[(sku_meli, fc_sao_other, week)] \
-# 				  - transfer_fc_sao_other
-# final_fc_poa = initial_inventories[(sku_meli, 'POA', week)] \
-# 			   + transfer_fc_sao_seller + transfer_fc_sao_other
-#
-# initial_inventories.update({(sku_meli, fc_sao_seller, week + 1): final_sao_seller})
-# initial_inventories.update({(sku_meli, fc_sao_other, week + 1): final_sao_other})
-# initial_inventories.update({(sku_meli, 'POA', week + 1): final_fc_poa})
+print(optimized_transfers)
