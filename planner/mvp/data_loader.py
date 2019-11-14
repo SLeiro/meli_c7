@@ -81,39 +81,49 @@ class DataLoader:
 		if (sku_meli, fc) in self.initial_inventories.keys():
 			return self.initial_inventories[(sku_meli, fc)]
 		else:
-			return None
+			return 0
 
-	def get_forbidden_inventories(self):
+	def get_forbidden_inventories(self, sku_meli, fc):
+		if (sku_meli, fc) in self.forbidden_inventories.keys():
+			return self.forbidden_inventories[(sku_meli, fc)]
+		else:
+			return 0
 
-		return self.forbidden_inventories
+	def get_traveling_inventories(self, sku_meli, fc):
+		if (sku_meli, fc) in self.traveling_inventories.keys():
+			return self.traveling_inventories[(sku_meli, fc)]
+		else:
+			return 0
 
-	def get_traveling_inventories(self):
+	def get_fc_by_sku_meli(self, sku_meli):
+		if sku_meli in self.fc_by_sku_meli.keys():
+			return self.fc_by_sku_meli[sku_meli]
+		else:
+			return 'SAO1'
 
-		return self.traveling_inventories
+	def get_typings(self, sku_meli):
+		if sku_meli in self.typings.keys():
+			return self.fc_by_sku_meli[sku_meli]
+		else:
+			return 'NO FORECASTEABLE'
 
-	def get_fc_by_sku_meli(self):
+	def get_forecasts(self, sku_meli, fc, week):
+		if (sku_meli, fc, week) in self.forecasts.keys():
+			return self.forecasts[(sku_meli, fc, week)]
+		else:
+			return 0
 
-		return self.fc_by_sku_meli
+	def get_days_on_hand(self, sku_meli, fc):
+		if (sku_meli, fc) in self.forecasts.keys():
+			return self.forecasts[(sku_meli, fc)]
+		else:
+			return 0
 
-	def get_typings(self):
-
-		return self.typings
-
-	def get_forecasts(self):
-
-		return self.forecasts
-
-	def get_days_on_hand(self):
-
-		return self.days_on_hand
-
-	def get_reorder_points(self):
-
-		return self.reorder_points
-
-	def get_objective_inventories(self):
-
-		return self.objective_inventories
+	def get_objective_inventories(self, sku_meli, fc):
+		if (sku_meli, fc) in self.objective_inventories.keys():
+			return self.objective_inventories[(sku_meli, fc)]
+		else:
+			return 0
 
 	def get_origin_preference_factor(self):
 		return self.origin_preference_factor
