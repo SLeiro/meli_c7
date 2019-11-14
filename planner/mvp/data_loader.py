@@ -7,7 +7,7 @@ class DataLoader:
 	def __init__(self):
 
 		self.date_format = '%Y-%m-%d %H:%M:%S'
-		self.initial_inventories = {}  # dictionary <(skuMeli, FC, semana) : valor>
+		self.initial_inventories = {}  # dictionary <(skuMeli, FC) : valor>
 		self.forbidden_inventories = {}  # dictionary <(skuMeli, FC) : valor>
 		self.traveling_inventories = {}  # dictionary <(skuMeli, FC, semana) : valor> (llegada)
 		self.fc_by_sku_meli = {}  # dictionary <skuMeli : FC>
@@ -16,6 +16,7 @@ class DataLoader:
 		self.days_on_hand = {}  # dictionary <(skuMeli, FC, semana) : valor>
 		self.reorder_points = {}  # dictionary <(skuMeli, FC, semana) : valor>
 		self.sku_meli_list = []  # list <skuMeli>
+		self.objective_inventories = {}  # dictionary <(skuMeli, FC) : valor>
 		self.optimized_week = None
 		self.origin_preference_factor = 0
 
@@ -26,9 +27,9 @@ class DataLoader:
 
 		# print(data["initial_inventories"])
 		for item in data["initial_inventories"]:
-			week = datetime.datetime.strptime(item["week"], self.date_format)
+			# week = datetime.datetime.strptime(item["week"], self.date_format)
 			self.initial_inventories.update(
-				{(item["sku_meli"], item["fc"], week): item["value"]})
+				{(item["sku_meli"], item["fc"]): item["value"]})
 
 		for item in data["forbidden_inventories"]:
 			self.initial_inventories.update({(item["sku_meli"], item["fc"]): item[
@@ -52,6 +53,9 @@ class DataLoader:
 		for item in data["days_on_hand"]:
 			week = datetime.datetime.strptime(item["week"], self.date_format)
 			self.days_on_hand.update({(item["sku_meli"], item["fc"], week): item["value"]})
+
+		for item in data["objective_inventories"]:
+			self.objective_inventories.update({(item["sku_meli"], item["fc"]): item["value"]})
 
 		for item in data["reorder_points"]:
 			self.reorder_points.update(
@@ -103,6 +107,10 @@ class DataLoader:
 	def get_reorder_points(self):
 
 		return self.reorder_points
+
+	def get_objective_inventories(self):
+
+		return self.objective_inventories
 
 	def get_origin_preference_factor(self):
 		return self.origin_preference_factor
