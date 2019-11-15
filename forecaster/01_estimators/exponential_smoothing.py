@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.base import BaseEstimator
-# TODO: fix this
 
 class ExponentialSmoothing(BaseEstimator):
     '''Implements a naiveLV forecast.'''
@@ -27,7 +26,7 @@ class ExponentialSmoothing(BaseEstimator):
             # forecast
             for i in range(1, length + self.N):
                 # ex-post
-                if i <= length:
+                if i < length:
                     self.forecast[i] = self.alpha * self.X[i] + (1 - self.alpha) * (self.forecast[i - 1])
                 # ex-ante
                 else:

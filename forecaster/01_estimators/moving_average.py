@@ -29,7 +29,7 @@ class MovingAverage(BaseEstimator):
             self.forecast[:self.periods] = self.X[:self.periods]
             for i in range(self.periods, length + self.N):
                 # ex-post
-                if i <= self.N:   #TODO: aca no es N, es length!!!
+                if i <= length:
                     self.forecast[i] = self.X[i - self.periods:i].mean()
                 # ex-ante
                 else:
