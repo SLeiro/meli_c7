@@ -15,6 +15,7 @@ class Forecaster(BaseEstimator):
     """
     Forecasting model wrapper
     """
+
     def __init__(self, estimator, s_type, freq=Frequency.Week):
         """
         Generate an instance for a specific (series type, granularity)
@@ -72,6 +73,18 @@ class Forecaster(BaseEstimator):
 
         return df_out
 
-    def predict(self, X):
+    def predict(self, pairs_to_predict, periods, start):
+        '''
+
+        :param X: list of pairs (inventory_id, region)
+        :param periods: int. Number of next periods to forecast from `start`
+        :param start: int. Starting date point
+        :return:
+        '''
         # THIS IS PSEUDO-CODE, JUST TO SHOW AN EXAMPLE OF THE IDEA!!
-        return [self.predict_one(inventory, region, start, periods) for inventory, region, start, periods in X]
+        forecasts = []
+        for inventory, region in pairs_to_predict:
+            forecast = self.models[(inventory, region)].predict(start)
+            forecasts.append(forecast[:periods])
+
+        return forecasts
