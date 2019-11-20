@@ -26,7 +26,7 @@ class Planner:
 
 	def get_objective_inventory_with_fixed_period(self, sku_meli, fc):
 		objective_inventory = self.data_loader.get_fixed_period_objective_inventory(sku_meli, fc)
-
+		# print('\tinventario objetivo primer paso : {}'.format(objective_inventory))
 		return objective_inventory
 
 	def generate_transfer_with_reorder_point(self, sku_meli):
