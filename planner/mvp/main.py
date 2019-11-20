@@ -10,7 +10,8 @@ def main():
 
 	planner.execute_planning()
 
-	print(planner.optimized_transfers)
+	print('\nOptimized Transfers: {}'.format(planner.optimized_transfers))
+
 
 if __name__ == '__main__':
 	main()
