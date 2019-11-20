@@ -30,7 +30,15 @@ class Planner:
 		return objective_inventory
 
 	def generate_transfer_with_reorder_point(self, sku_meli):
-		return 0
+		available_POA = self.data_loader.get_initial_inventory(sku_meli, 'POA')
+		available_POA += self.data_loader.get_traveling_inventory(sku_meli, 'POA')
+		reorder_point_POA = self.data_loader.get_reorder_point(sku_meli, 'POA')
+
+		if available_POA < reorder_point_POA:
+			# TODO: check if there is conflict with SAO
+			optimized_transfer = self.data_loader.get_order_quantity(sku_meli, 'POA')
+
+		return optimized_transfer
 
 	def generate_transfer_with_objective_inventory(self, sku_meli, week_1, week_2):
 		# Available stock in SAO
@@ -50,17 +58,19 @@ class Planner:
 		forecast_week_1_SAO = self.data_loader.get_forecast(sku_meli, 'SAO', week_1)
 		forecast_week_1_POA = self.data_loader.get_forecast(sku_meli, 'POA', week_1)
 
-		print('available stocks: SAO: {}, POA: {}'.format(available_SAO, available_POA))
-		print('fcst next week: SAO: {}, POA: {}'.format(forecast_week_1_SAO, forecast_week_1_POA))
-
 		# Objective stocks in SAO and POA
 		objective_SAO = self.get_objective_inventory(sku_meli, 'SAO', week_2)
 		objective_POA = self.get_objective_inventory(sku_meli, 'POA', week_2)
 
+		print('sku_meli: {}'.format(sku_meli))
+		print('\tavailable stocks: SAO: {}, POA: {}'.format(available_SAO, available_POA))
+		print('\tfcst week_1: SAO: {}, POA: {}'.format(forecast_week_1_SAO, forecast_week_1_POA))
+		print('\tobjective stocks: SAO: {}, POA: {}'.format(objective_SAO, objective_POA))
+
 		if available_SAO >= objective_SAO + forecast_week_1_SAO and available_SAO + available_POA \
 				>= objective_SAO + objective_POA + forecast_week_1_SAO + forecast_week_1_POA:
 
-			print("caso optimista")
+			print('\tsobrante en SAO, sobrante a nivel global')
 			forecast_week_2_SAO = self.data_loader.get_forecast(sku_meli, 'SAO', week_2)
 			forecast_week_2_POA = self.data_loader.get_forecast(sku_meli, 'POA', week_2)
 
@@ -69,23 +79,25 @@ class Planner:
 								  - available_POA + forecast_week_1_POA) / \
 								 (1 + forecast_week_2_POA / forecast_week_2_SAO)
 
-			print('optimized transfer before bounds : {}'.format(optimized_transfer))
+			print('\toptimized transfer before bounds : {}'.format(optimized_transfer))
 
 			# Check if the optimized transfer quantity doesn't break stocks in SAO or POA
 			min_required_transfer = objective_POA - (available_POA - forecast_week_1_POA)
 			max_required_transfer = - objective_SAO + (available_SAO - forecast_week_1_SAO)
 
-			print('min : {}. max : {}'.format(min_required_transfer, max_required_transfer))
+			print('\tmin : {}. max : {}'.format(min_required_transfer, max_required_transfer))
 
 			optimized_transfer = max(optimized_transfer, min_required_transfer)
 			optimized_transfer = min(optimized_transfer, max_required_transfer)
 
-			print('optimized transfer post bounds : {}'.format(optimized_transfer))
+			print('\toptimized transfer post bounds : {}'.format(optimized_transfer))
 
 		elif available_SAO >= objective_SAO + forecast_week_1_SAO:
+			print('\tsobrante en SAO, faltante a nivel global')
 			optimized_transfer = - objective_SAO + (available_SAO - forecast_week_1_SAO)
 
 		else:
+			print('\tfaltante en SAO')
 			optimized_transfer = 0
 
 		return optimized_transfer
