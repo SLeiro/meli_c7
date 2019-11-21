@@ -8,40 +8,24 @@ class Planner:
 		self.optimized_transfers = {}  # dictionary <(skuMeli, FC, FC): valor>
 
 	def get_objective_inventory(self, sku_meli, fc, week_2):
+
 		typing = self.data_loader.get_typing(sku_meli)
 
 		if typing == 'FA ALTO':
-			return self.get_objective_inventory_with_forecast(sku_meli, fc, week_2)
+			objective_inventory = self.data_loader.get_forecast(sku_meli, fc, week_2)
+			objective_inventory += (1.0 / 7.0) \
+								   * self.data_loader.get_forecast(sku_meli, fc, week_2) \
+								   * self.data_loader.get_safety_stock_days_on_hand(sku_meli, fc)
 		else:
-			return self.get_objective_inventory_with_fixed_period(sku_meli, fc)
-
-	def get_objective_inventory_with_forecast(self, sku_meli, fc, week_2):
-		objective_inventory = self.data_loader.get_forecast(sku_meli, fc, week_2)
-		objective_inventory += (1.0 / 7.0) \
-							   * self.data_loader.get_forecast(sku_meli, fc, week_2) \
-							   * self.data_loader.get_safety_stock_days_on_hand(sku_meli, fc)
-		objective_inventory += self.data_loader.get_additional_inventory(sku_meli, fc)
+			# TODO: change input for average, max or other statistical of historical weekly sales
+			objective_inventory = self.data_loader.get_forecast(sku_meli, fc, week_2)
+			objective_inventory += (1.0 / 7.0) \
+								   * self.data_loader.get_forecast(sku_meli, fc, week_2) \
+								   * self.data_loader.get_safety_stock_days_on_hand(sku_meli, fc)
 
 		return objective_inventory
 
-	def get_objective_inventory_with_fixed_period(self, sku_meli, fc):
-		objective_inventory = self.data_loader.get_fixed_period_objective_inventory(sku_meli, fc)
-		# print('\tinventario objetivo primer paso : {}'.format(objective_inventory))
-		return objective_inventory
-
-	def generate_transfer_with_reorder_point(self, sku_meli):
-		available_POA = self.data_loader.get_initial_inventory(sku_meli, 'POA')
-		available_POA += self.data_loader.get_traveling_inventory(sku_meli, 'POA')
-		reorder_point_POA = self.data_loader.get_reorder_point(sku_meli, 'POA')
-
-		optimized_transfer = 0
-		if available_POA < reorder_point_POA:
-			# TODO: check if there is conflict with SAO
-			optimized_transfer = self.data_loader.get_order_quantity(sku_meli, 'POA')
-
-		return optimized_transfer
-
-	def generate_transfer_with_objective_inventory(self, sku_meli, week_1, week_2):
+	def generate_transfer(self, sku_meli, week_1, week_2):
 		# Available stock in SAO
 		available_SAO_1 = self.data_loader.get_initial_inventory(sku_meli, 'SAO1')
 		available_SAO_1 -= self.data_loader.get_forbidden_inventory(sku_meli, 'SAO1')
@@ -64,14 +48,14 @@ class Planner:
 		objective_POA = self.get_objective_inventory(sku_meli, 'POA', week_2)
 
 		print('sku_meli: {}'.format(sku_meli))
-		print('\tavailable stocks: SAO: {}, POA: {}'.format(available_SAO, available_POA))
+		print('\tavailable: SAO: {}, POA: {}'.format(available_SAO, available_POA))
 		print('\tfcst week_1: SAO: {}, POA: {}'.format(forecast_week_1_SAO, forecast_week_1_POA))
-		print('\tobjective stocks: SAO: {}, POA: {}'.format(objective_SAO, objective_POA))
+		print('\tobjective: SAO: {}, POA: {}'.format(objective_SAO, objective_POA))
 
 		if available_SAO >= objective_SAO + forecast_week_1_SAO and available_SAO + available_POA \
 				>= objective_SAO + objective_POA + forecast_week_1_SAO + forecast_week_1_POA:
 
-			print('\tsobrante en SAO, sobrante a nivel global')
+			print('\tOverall: Surplus.')
 			forecast_week_2_SAO = self.data_loader.get_forecast(sku_meli, 'SAO', week_2)
 			forecast_week_2_POA = self.data_loader.get_forecast(sku_meli, 'POA', week_2)
 
@@ -94,12 +78,12 @@ class Planner:
 			print('\toptimized transfer post bounds : {}'.format(optimized_transfer))
 
 		elif available_SAO >= objective_SAO + forecast_week_1_SAO:
-			print('\tsobrante en SAO, faltante a nivel global')
+			print('\tOverall: Shortage. SAO: Surplus')
 			optimized_transfer = - objective_SAO + (available_SAO - forecast_week_1_SAO)
 			print('\toptimized transfer: {}'.format(optimized_transfer))
 
 		else:
-			print('\tfaltante en SAO')
+			print('\tOverall: Shortage. SAO: Shortage')
 			optimized_transfer = 0
 			print('\toptimized transfer: {}'.format(optimized_transfer))
 
@@ -131,9 +115,5 @@ class Planner:
 		week_2 = self.data_loader.get_optimized_week() + relativedelta(weeks = 1)
 
 		for sku_meli in self.data_loader.get_sku_meli_list():
-			optimized_transfer = \
-				self.generate_transfer_with_objective_inventory(sku_meli, week_1, week_2)
-
-			# optimized_transfer = self.generate_transfer_with_reorder_point(sku_meli)
-
+			optimized_transfer = self.generate_transfer(sku_meli, week_1, week_2)
 			self.split_and_save_transfers(sku_meli, optimized_transfer)

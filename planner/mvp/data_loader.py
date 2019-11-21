@@ -7,33 +7,28 @@ class DataLoader:
 	def __init__(self):
 
 		self.date_format = '%Y-%m-%d %H:%M:%S'
-		self.initial_inventories = {}  # dictionary <(skuMeli, FC) : valor>
-		self.forbidden_inventories = {}  # dictionary <(skuMeli, FC) : valor>
-		self.traveling_inventories = {}  # dictionary <(skuMeli, FC, week) : valor> (arriving)
+		self.initial_inventories = {}  # dictionary <(skuMeli, FC) : float>
+		self.forbidden_inventories = {}  # dictionary <(skuMeli, FC) : float>
+		self.traveling_inventories = {}  # dictionary <(skuMeli, FC, week) : float> (arriving)
 		self.fc_by_sku_meli = {}  # dictionary <skuMeli : FC>
 
-		self.typings = {}  # dictionary <skuMeli : string>
-		self.forecasts = {}  # dictionary <(skuMeli, FC, semana) : valor>
+		self.typings = {}  # dictionary <skuMeli : typing>
+		self.forecasts = {}  # dictionary <(skuMeli, FC, week) : float>
+		self.weekly_averages = {}  # dictionary <(skuMeli, FC, week) : float>
 
-		self.safety_stock_days_on_hand = {}  # dictionary <(skuMeli, FC, semana) : valor>
-		self.additional_inventories = {}
-		self.reorder_points = {}  # dictionary <(skuMeli, FC, semana) : valor>
-		self.order_quantities = {}  # dictionary <(skuMeli, FC) : valor>
-		self.fixed_period_objective_inventories = {}  # dictionary <(skuMeli, FC) : valor>
+		self.safety_stock_days_on_hand = {}  # dictionary <(skuMeli, FC, week) : float>
+		self.origin_preference_factor = 0  # float between 0 and 1
+
 		self.sku_meli_list = []  # list <skuMeli>
-
 		self.review_period = 7
 		self.optimized_week = None
-		self.origin_preference_factor = 0
 
 	def load_from_json(self, file_name):
 
 		with open('{}'.format(file_name)) as json_file:
 			data = json.load(json_file)
 
-		# print(data["initial_inventories"])
 		for item in data["initial_inventories"]:
-			# week = datetime.datetime.strptime(item["week"], self.date_format)
 			self.initial_inventories.update(
 				{(item["sku_meli"], item["fc"]): item["value"]})
 
@@ -58,22 +53,6 @@ class DataLoader:
 			self.safety_stock_days_on_hand.update(
 				{(item["sku_meli"], item["fc"]): item["value"]})
 
-		for item in data["additional_inventories"]:
-			self.additional_inventories.update(
-				{(item["sku_meli"], item["fc"]): item["additional_inventory"]})
-
-		for item in data["reorder_points"]:
-			self.reorder_points.update(
-				{(item["sku_meli"], item["fc"]): item["reorder_point"]})
-
-		for item in data["order_quantities"]:
-			self.order_quantities.update(
-				{(item["sku_meli"], item["fc"]): item["order_quantity"]})
-
-		for item in data["fixed_period_objective_inventories"]:
-			self.fixed_period_objective_inventories.update(
-				{(item["sku_meli"], item["fc"]): item["fixed_period_objective_inventory"]})
-
 		for item in data["parameters"]["sku_meli_list"]:
 			self.sku_meli_list.append(item["sku_meli"])
 
@@ -88,6 +67,13 @@ class DataLoader:
 
 		dao = Dao(db = config["db"], host = config["host"], port = config["port"],
 				  user = config["user"], password = config["password"], schema = config["schema"])
+
+		# TODO: complete method in order to fill the dictionaries from tables in database
+
+	def load_from_csv(self):
+
+		# TODO: complete method in order to fill the dictionaries from csv files
+		pass
 
 	def get_initial_inventory(self, sku_meli, fc):
 
@@ -129,30 +115,6 @@ class DataLoader:
 	def get_safety_stock_days_on_hand(self, sku_meli, fc):
 		if (sku_meli, fc) in self.safety_stock_days_on_hand.keys():
 			return self.safety_stock_days_on_hand[(sku_meli, fc)]
-		else:
-			return 0
-
-	def get_additional_inventory(self, sku_meli, fc):
-		if (sku_meli, fc) in self.additional_inventories.keys():
-			return self.additional_inventories[(sku_meli, fc)]
-		else:
-			return 0
-
-	def get_reorder_point(self, sku_meli, fc):
-		if (sku_meli, fc) in self.reorder_points.keys():
-			return self.reorder_points[(sku_meli, fc)]
-		else:
-			return 0
-
-	def get_order_quantity(self, sku_meli, fc):
-		if (sku_meli, fc) in self.order_quantities.keys():
-			return self.order_quantities[(sku_meli, fc)]
-		else:
-			return 0
-
-	def get_fixed_period_objective_inventory(self, sku_meli, fc):
-		if (sku_meli, fc) in self.fixed_period_objective_inventories.keys():
-			return self.fixed_period_objective_inventories[(sku_meli, fc)]
 		else:
 			return 0
 

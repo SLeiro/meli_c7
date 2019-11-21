@@ -58,6 +58,10 @@
     {
       "sku_meli": 2,
       "fc": "SAO1"
+    },
+    {
+      "sku_meli": 3,
+      "fc": "SAO1"
     }
   ],
   "typings": [
@@ -180,10 +184,6 @@
       "value": 7
     }
   ],
-  "additional_inventories": [],
-  "reorder_points": [],
-  "order_quantities": [],
-  "fixed_period_objective_inventories": [],
   "parameters": {
     "origin_preference_factor": 0.8,
     "optimized_week": "2019-11-01 00:00:00",
