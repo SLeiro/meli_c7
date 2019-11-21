@@ -16,11 +16,11 @@ class Planner:
 			return self.get_objective_inventory_with_fixed_period(sku_meli, fc)
 
 	def get_objective_inventory_with_forecast(self, sku_meli, fc, week_2):
-		objective_inventory = self.data_loader.get_forecasts(sku_meli, fc, week_2)
+		objective_inventory = self.data_loader.get_forecast(sku_meli, fc, week_2)
 		objective_inventory += (1.0 / 7.0) \
-							   * self.data_loader.get_forecasts(sku_meli, fc, week_2) \
+							   * self.data_loader.get_forecast(sku_meli, fc, week_2) \
 							   * self.data_loader.get_safety_stock_days_on_hand(sku_meli, fc)
-		objective_inventory += self.data_loader.get_additional_inventories(sku_meli, fc)
+		objective_inventory += self.data_loader.get_additional_inventory(sku_meli, fc)
 
 		return objective_inventory
 
@@ -34,6 +34,7 @@ class Planner:
 		available_POA += self.data_loader.get_traveling_inventory(sku_meli, 'POA')
 		reorder_point_POA = self.data_loader.get_reorder_point(sku_meli, 'POA')
 
+		optimized_transfer = 0
 		if available_POA < reorder_point_POA:
 			# TODO: check if there is conflict with SAO
 			optimized_transfer = self.data_loader.get_order_quantity(sku_meli, 'POA')
@@ -128,8 +129,6 @@ class Planner:
 		week_2 = self.data_loader.get_optimized_week() + relativedelta(weeks = 1)
 
 		for sku_meli in self.data_loader.get_sku_meli_list():
-			optimized_transfer = 0
-
 			optimized_transfer = \
 				self.generate_transfer_with_objective_inventory(sku_meli, week_1, week_2)
 

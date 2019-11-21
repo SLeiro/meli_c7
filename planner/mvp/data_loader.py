@@ -55,9 +55,8 @@ class DataLoader:
 			self.forecasts.update({(item["sku_meli"], item["fc"], week): item["value"]})
 
 		for item in data["safety_stock_days_on_hand"]:
-			week = datetime.datetime.strptime(item["week"], self.date_format)
 			self.safety_stock_days_on_hand.update(
-				{(item["sku_meli"], item["fc"], week): item["value"]})
+				{(item["sku_meli"], item["fc"]): item["value"]})
 
 		for item in data["additional_inventories"]:
 			self.additional_inventories.update(
@@ -117,7 +116,7 @@ class DataLoader:
 
 	def get_typing(self, sku_meli):
 		if sku_meli in self.typings.keys():
-			return self.fc_by_sku_meli[sku_meli]
+			return self.typings[sku_meli]
 		else:
 			return 'NO FORECASTEABLE'
 
