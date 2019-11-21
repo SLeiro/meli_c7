@@ -29,6 +29,21 @@
       "sku_meli": 2,
       "fc": "POA",
       "value": 300
+    },
+    {
+      "sku_meli": 3,
+      "fc": "SAO1",
+      "value": 50
+    },
+    {
+      "sku_meli": 3,
+      "fc": "SAO2",
+      "value": 50
+    },
+    {
+      "sku_meli": 3,
+      "fc": "POA",
+      "value": 50
     }
   ],
   "forbidden_inventories": [
@@ -52,6 +67,10 @@
     },
     {
       "sku_meli": 2,
+      "value": "FA ALTO"
+    },
+    {
+      "sku_meli": 3,
       "value": "FA ALTO"
     }
   ],
@@ -103,27 +122,29 @@
       "fc": "POA",
       "week": "2019-11-08 00:00:00",
       "value": 200
-    }
-  ],
-  "objective_inventories": [
-    {
-      "sku_meli": 1,
-      "fc": "SAO",
-      "value": 150
     },
     {
-      "sku_meli": 1,
-      "fc": "POA",
+      "sku_meli": 3,
+      "fc": "SAO",
+      "week": "2019-11-01 00:00:00",
       "value": 100
     },
     {
-      "sku_meli": 2,
+      "sku_meli": 3,
       "fc": "SAO",
+      "week": "2019-11-08 00:00:00",
+      "value": 100
+    },
+    {
+      "sku_meli": 3,
+      "fc": "POA",
+      "week": "2019-11-01 00:00:00",
       "value": 200
     },
     {
-      "sku_meli": 2,
+      "sku_meli": 3,
       "fc": "POA",
+      "week": "2019-11-08 00:00:00",
       "value": 200
     }
   ],
@@ -131,22 +152,32 @@
     {
       "sku_meli": 1,
       "fc": "SAO",
-      "value": 2
+      "value": 7
     },
     {
       "sku_meli": 1,
       "fc": "POA",
-      "value": 2
+      "value": 7
     },
     {
       "sku_meli": 2,
       "fc": "SAO",
-      "value": 2
+      "value": 7
     },
     {
       "sku_meli": 2,
       "fc": "POA",
-      "value": 2
+      "value": 7
+    },
+    {
+      "sku_meli": 3,
+      "fc": "SAO",
+      "value": 7
+    },
+    {
+      "sku_meli": 3,
+      "fc": "POA",
+      "value": 7
     }
   ],
   "additional_inventories": [],
@@ -160,8 +191,11 @@
       {
         "sku_meli": 1
       },
-       {
+      {
         "sku_meli": 2
+      },
+      {
+        "sku_meli": 3
       }
     ]
   }

@@ -96,10 +96,12 @@ class Planner:
 		elif available_SAO >= objective_SAO + forecast_week_1_SAO:
 			print('\tsobrante en SAO, faltante a nivel global')
 			optimized_transfer = - objective_SAO + (available_SAO - forecast_week_1_SAO)
+			print('\toptimized transfer: {}'.format(optimized_transfer))
 
 		else:
 			print('\tfaltante en SAO')
 			optimized_transfer = 0
+			print('\toptimized transfer: {}'.format(optimized_transfer))
 
 		return optimized_transfer
 

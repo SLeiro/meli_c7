@@ -10,7 +10,9 @@ def main():
 
 	planner.execute_planning()
 
-	print('\nOptimized Transfers: {}'.format(planner.optimized_transfers))
+	print('\nOptimized Transfers:')
+	for key, value in planner.optimized_transfers.items():
+		print(key, value)
 
 
 if __name__ == '__main__':
